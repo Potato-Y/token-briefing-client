@@ -34,7 +34,7 @@
 
 #navlink-home {
   font-size: 2rem;
-
+  font-family: "NanumSquareRoundEB" !important;
   margin-left: 10px;
 }
 </style>
