@@ -1,0 +1,9 @@
+#container-body {
+  padding: 10px;
+  padding-top: 20px;
+}
+
+#container-title {
+  font-family: 'NanumSquareRoundEB' !important;
+  font-size: 23px;
+}
