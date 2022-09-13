@@ -1,9 +1,9 @@
-#token-container-body {
+#memo-container-body {
   padding: 10px;
   padding-top: 20px;
 }
 
-#token-container-title {
+#memo-container-title {
   font-family: 'NanumSquareRoundEB' !important;
   font-size: 23px;
 }

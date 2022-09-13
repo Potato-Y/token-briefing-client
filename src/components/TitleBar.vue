@@ -5,6 +5,7 @@
         id="navlink-home"
         class="navlink-to-reset font-background-transparency"
         style="cursor: pointer"
+        @click="toHome"
       >
         Token Briefing
       </span>
@@ -14,6 +15,18 @@
     </div>
   </div>
 </template>
+
+<script>
+export default {
+  methods: {
+    toHome() {
+      if (location.pathname === "/") {
+        window.location.reload();
+      }
+    },
+  },
+};
+</script>
 
 <style>
 #head-box {
