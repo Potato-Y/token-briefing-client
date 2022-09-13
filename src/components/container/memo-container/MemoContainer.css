@@ -1,0 +1,9 @@
+#memo-container-body {
+  padding: 10px;
+  padding-top: 20px;
+}
+
+#memo-container-title {
+  font-family: 'NanumSquareRoundEB' !important;
+  font-size: 23px;
+}
