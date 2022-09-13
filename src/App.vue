@@ -10,7 +10,10 @@
     </div>
 
     <!-- 프로그램 첫 실행 시 필수 진행 사항 -->
-    <ReadyView :changeMainPageLock="changeMainPageLock" />
+    <ReadyView
+      :changeMainPageLock="changeMainPageLock"
+      v-if="mainPageLock == true"
+    />
   </div>
 </template>
 
