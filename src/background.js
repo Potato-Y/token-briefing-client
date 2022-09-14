@@ -78,10 +78,5 @@ if (isDevelopment) {
   }
 }
 
-// ipcMain.on('api-server-check', (event, arg) => {
-//   console.log(arg); // "ping" 출력
-//   event.returnValue = true;
-// });
-
 import ipcMapping from './electronbackend/electronIPC';
 new ipcMapping(ipcMain);

@@ -1,10 +1,30 @@
 import axios from 'axios';
+import db from './db/dbController/DBController.js';
 
 class ElectronIPC {
   constructor(ipc) {
     this.ipcMain = ipc;
+    this.dbController;
+    this.userName = '\\Not Loading\\';
+    this.serverIp = '\\Not Loading\\';
+    /** dbLoad가 정상적으로 안된 경우 횟수 체크 */
+    this.errStack = 0;
+
+    this.dbLoad();
 
     this.apiServerCheck();
+    this.getClientSetting();
+  }
+
+  /** 프로그램에 필요한 DB 연결 및 내용 로드 */
+  dbLoad() {
+    this.dbController = new db();
+    this.dbController.connectDB();
+
+    this.dbController.setUserNameAndServerIp((userName, serverIp) => {
+      this.userName = userName;
+      this.serverIp = serverIp;
+    });
   }
 
   /** API 서버의 주소를 확인 */
@@ -20,6 +40,24 @@ class ElectronIPC {
           console.log('err channel: api-server-check\n' + err);
           event.returnValue = false;
         });
+    });
+  }
+
+  getClientSetting() {
+    this.ipcMain.on('get-client-setting', (event) => {
+      if (this.userName == '\\Not Loading\\' || this.serverIp == '\\Not Loading\\') {
+        this.errStack++;
+        if (this.errStack > 5) {
+          this.dbController.setUserNameAndServerIp((userName, serverIp) => {
+            this.userName = userName;
+            this.serverIp = serverIp;
+          });
+          return setTimeout(() => {
+            event.returnValue = { userName: this.userName, serverIp: this.serverIp };
+          }, 1000);
+        }
+      }
+      event.returnValue = { userName: this.userName, serverIp: this.serverIp };
     });
   }
 }
