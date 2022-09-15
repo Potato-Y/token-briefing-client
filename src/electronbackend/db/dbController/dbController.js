@@ -87,7 +87,7 @@ class DBController {
    * electronIPC에서 userName과 serverIp 저장을 위해 사용
    * @param {*} func 변수 지정할 함수
    */
-  setUserNameAndServerIp(func) {
+  getUserNameAndServerIp(func) {
     this.db.serialize();
     this.db.get(`SELECT * FROM 'client_settings' WHERE id='settings'`, (err, value) => {
       if (err) {
@@ -100,6 +100,39 @@ class DBController {
         }
       }
     });
+  }
+
+  /**
+   * 유저 설정 값을 변경합니다.
+   * @param  event ipcMain event
+   * @param  args ipcMain args
+   * @returns 작업이 정상 완료될 경우 true를 리턴
+   */
+  updateUserNameAndServerIp(event, args) {
+    this.db.serialize();
+
+    this.db.run(
+      `
+    UPDATE 'client_settings' 
+    SET
+    'server_ip'='${args.serverIp}', 
+    'user_name'='${args.userName}' 
+    WHERE
+    id='settings'`,
+      (err) => {
+        if (err) {
+          console.error('err: [updateUserNameAndServerIp]' + err);
+          event.returnValue = false;
+
+          return false;
+        } else {
+          console.log('[updateUserNameAndServerIp] 성공');
+          event.returnValue = true;
+
+          return true;
+        }
+      }
+    );
   }
 }
 

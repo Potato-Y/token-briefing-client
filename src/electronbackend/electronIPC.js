@@ -14,6 +14,7 @@ class ElectronIPC {
 
     this.apiServerCheck();
     this.getClientSetting();
+    this.setServerIpUserName();
   }
 
   /** 프로그램에 필요한 DB 연결 및 내용 로드 */
@@ -21,7 +22,7 @@ class ElectronIPC {
     this.dbController = new db();
     this.dbController.connectDB();
 
-    this.dbController.setUserNameAndServerIp((userName, serverIp) => {
+    this.dbController.getUserNameAndServerIp((userName, serverIp) => {
       this.userName = userName;
       this.serverIp = serverIp;
     });
@@ -48,7 +49,7 @@ class ElectronIPC {
       if (this.userName == '\\Not Loading\\' || this.serverIp == '\\Not Loading\\') {
         this.errStack++;
         if (this.errStack > 5) {
-          this.dbController.setUserNameAndServerIp((userName, serverIp) => {
+          this.dbController.getUserNameAndServerIp((userName, serverIp) => {
             this.userName = userName;
             this.serverIp = serverIp;
           });
@@ -58,6 +59,16 @@ class ElectronIPC {
         }
       }
       event.returnValue = { userName: this.userName, serverIp: this.serverIp };
+    });
+  }
+
+  /** 렌더에서 설정한 serverIp와 userName을 DB에 저장하는 ipc */
+  setServerIpUserName() {
+    this.ipcMain.on('set-serverip-username', (event, args) => {
+      if (this.dbController.updateUserNameAndServerIp(event, args) == true) {
+        this.serverIp = args.serverIp;
+        this.userName = args.userName;
+      }
     });
   }
 }

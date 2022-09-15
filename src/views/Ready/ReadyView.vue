@@ -112,12 +112,25 @@ export default {
         this.startButtonLock = true;
       }
     },
+    /** 시작 버튼 락 */
     startButtonLockOn() {
       this.startButtonLock = true;
     },
     /** 저장 및 시작 버튼을 누른 경우 */
     start() {
-      this.changeMainPageLock(false);
+      const { ipcRenderer } = require("electron");
+      if (
+        ipcRenderer.sendSync("set-serverip-username", {
+          serverIp: this.serverIp,
+          userName: this.userName,
+        }) == true
+      ) {
+        console.log("db 업데이트 완료");
+        this.changeMainPageLock(false);
+      } else {
+        alert("저장에 실패하였습니다.");
+        console.log("db 업데이트 실패");
+      }
     },
   },
   mounted() {
