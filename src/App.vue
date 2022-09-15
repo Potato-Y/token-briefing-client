@@ -1,23 +1,41 @@
 <template>
-  <!-- <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav> -->
-  <div class="wrap">
-    <TitleBar />
-    <div className="item-wrap">
-      <router-view />
+  <div>
+    <div v-if="mainPageLock == false">
+      <div class="wrap">
+        <TitleBar />
+        <div className="item-wrap">
+          <router-view />
+        </div>
+      </div>
     </div>
+
+    <!-- 프로그램 첫 실행 시 필수 진행 사항 -->
+    <ReadyView
+      :changeMainPageLock="changeMainPageLock"
+      v-if="mainPageLock == true"
+    />
   </div>
 </template>
 
 <script>
 import TitleBar from "./components/TitleBar.vue";
+import ReadyView from "./views/Ready/ReadyView.vue";
 
 export default {
   name: "App",
   components: {
     TitleBar,
+    ReadyView,
+  },
+  data() {
+    return {
+      /** 메인 페이지 잠금 상태 */
+      mainPageLock: true,
+      /** 메인 페이지 잠금 해제 */
+      changeMainPageLock: (bool) => {
+        this.mainPageLock = bool;
+      },
+    };
   },
 };
 </script>
