@@ -110,7 +110,6 @@ export default {
 
           this.writter = data.writter;
           this.updateDate = data.date;
-          this.memo = data.memo;
 
           setTokenNum((num) => {
             this.token1000 = num;
@@ -132,6 +131,7 @@ export default {
 
           if (data.memo != "null") {
             msg += data.memo;
+            this.memo = data.memo;
           }
 
           new Notification("새로운 오전 마감 번호가 있습니다.", {
@@ -139,7 +139,7 @@ export default {
           });
 
           const { ipcRenderer } = require("electron");
-          ipcRenderer.sendSync("win-highligth", null);
+          ipcRenderer.send("win-highligth");
         }
       } else {
         this.showBriefing = false;
