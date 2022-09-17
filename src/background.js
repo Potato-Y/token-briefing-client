@@ -85,6 +85,6 @@ new ipcMapping(ipcMain);
 
 // sdafasdfㅁㅇㄻㄴㅇㄹ
 ipcMain.on('win-highligth', () => {
-  win.flashFrame(false);
+  win.once('focus', () => win.flashFrame(false));
   return win.flashFrame(true);
 });
