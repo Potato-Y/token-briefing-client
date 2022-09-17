@@ -8,9 +8,11 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: true, standard: true } }]);
 
+let win;
+
 async function createWindow() {
   // Create the browser window.
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     width: 800,
     height: 600,
     resizable: false,
@@ -79,4 +81,4 @@ if (isDevelopment) {
 }
 
 import ipcMapping from './electronbackend/electronIPC';
-new ipcMapping(ipcMain);
+new ipcMapping(ipcMain, win);
