@@ -81,4 +81,10 @@ if (isDevelopment) {
 }
 
 import ipcMapping from './electronbackend/electronIPC';
-new ipcMapping(ipcMain, win);
+new ipcMapping(ipcMain);
+
+// sdafasdfㅁㅇㄻㄴㅇㄹ
+ipcMain.on('win-highligth', () => {
+  win.flashFrame(false);
+  return win.flashFrame(true);
+});

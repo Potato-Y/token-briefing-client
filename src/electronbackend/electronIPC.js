@@ -2,8 +2,7 @@ import axios from 'axios';
 import db from './db/dbController/DBController.js';
 
 class ElectronIPC {
-  constructor(ipc, win) {
-    this.win = win;
+  constructor(ipc) {
     this.ipcMain = ipc;
     this.dbController;
     this.userName = '\\Not Loading\\';
@@ -17,13 +16,6 @@ class ElectronIPC {
     this.getClientSetting();
     this.setServerIpUserName();
     this.apiTokenbriefingLast_latest_post();
-    this.winHighlight;
-  }
-
-  winHighlight() {
-    this.ipcMain.on('win-highligth', () => {
-      this.win.flashFrame(true);
-    });
   }
 
   /** 프로그램에 필요한 DB 연결 및 내용 로드 */
