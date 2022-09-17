@@ -2,7 +2,8 @@ import axios from 'axios';
 import db from './db/dbController/DBController.js';
 
 class ElectronIPC {
-  constructor(ipc) {
+  constructor(ipc, win) {
+    this.win = win;
     this.ipcMain = ipc;
     this.dbController;
     this.userName = '\\Not Loading\\';
@@ -15,6 +16,14 @@ class ElectronIPC {
     this.apiServerCheck();
     this.getClientSetting();
     this.setServerIpUserName();
+    this.apiTokenbriefingLast_latest_post();
+    this.winHighlight;
+  }
+
+  winHighlight() {
+    this.ipcMain.on('win-highligth', () => {
+      this.win.flashFrame(true);
+    });
   }
 
   /** 프로그램에 필요한 DB 연결 및 내용 로드 */
@@ -44,9 +53,26 @@ class ElectronIPC {
     });
   }
 
+  /** api서버를 통해 토큰 브리핑 최신 정보를 받아온다. */
+  apiTokenbriefingLast_latest_post() {
+    this.ipcMain.on('api-tokenbriefing-last_latest_post', (event) => {
+      axios
+        .get(`http://${this.serverIp}/api/v1/tokenbriefing/last_latest_post`)
+        .then((response) => {
+          event.returnValue = response.data;
+        })
+        .catch((err) => {
+          console.log('err channel: api-tokenbriefing-last_latest_post\n' + err);
+          event.returnValue = false;
+        });
+    });
+  }
+
+  /** 클라이언트 설정 값 불러오기 */
   getClientSetting() {
     this.ipcMain.on('get-client-setting', (event) => {
       if (this.userName == '\\Not Loading\\' || this.serverIp == '\\Not Loading\\') {
+        // 만약 로딩이 지속적으로 안될 경우 회수를 누적하여 db 로드를 다시 요청한다.
         this.errStack++;
         if (this.errStack > 5) {
           this.dbController.getUserNameAndServerIp((userName, serverIp) => {
