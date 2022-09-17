@@ -73,9 +73,9 @@ export default {
     dataSet(data) {
       const localDate = new Date(); // locale 시간
 
-      var nowTimeYear = localDate.getFullYear();
-      var nowTimeMonth = ("00" + (localDate.getMonth() + 1)).slice(-2);
-      var nowTimeDate = ("00" + localDate.getDate()).slice(-2);
+      let nowTimeYear = localDate.getFullYear();
+      let nowTimeMonth = ("00" + (localDate.getMonth() + 1)).slice(-2);
+      let nowTimeDate = ("00" + localDate.getDate()).slice(-2);
 
       // 현재 시간 (처리 시간)
       const date = `${nowTimeYear}-${nowTimeMonth}-${nowTimeDate}`;
@@ -83,22 +83,71 @@ export default {
       if (date == data.date.split(" ")[0]) {
         // 오늘 것이 맞으면 실행
 
+        // console.log(
+        //   this.updateDate + "\n" + data.updateDate + "\n" + this.updateDate ==
+        //     data.updateDate
+        // );
+
         if (this.updateDate != data.date) {
           // 만약 새로운 내용이 있다면 실행
-          this.token1000 = data.token1000;
-          this.token2000 = data.token2000;
-          this.token3000 = data.token3000;
-          this.token4000 = data.token4000;
-          this.token5000 = data.token5000;
+
+          /** Notification으로 보낼 메시지 내용 추가 */
+          let msg = "";
+
+          /**
+           * 새로운 정보 저장하기
+           * @param setFun 변수에 저장할 기능
+           * @param dataNum ex) data.token1000
+           */
+          const setTokenNum = (setFun, dataNum) => {
+            if (dataNum == null) {
+              setFun("-");
+            } else {
+              setFun(dataNum);
+              msg += dataNum + " ";
+            }
+          };
+
           this.writter = data.writter;
           this.updateDate = data.date;
           this.memo = data.memo;
 
+          setTokenNum((num) => {
+            this.token1000 = num;
+          }, data.token1000);
+          setTokenNum((num) => {
+            this.token2000 = num;
+          }, data.token2000);
+          setTokenNum((num) => {
+            this.token3000 = num;
+          }, data.token3000);
+          setTokenNum((num) => {
+            this.token4000 = num;
+          }, data.token4000);
+          setTokenNum((num) => {
+            this.token5000 = num;
+          }, data.token5000);
+
           this.showBriefing = true;
+
+          if (data.memo != "null") {
+            msg += data.memo;
+          }
+
+          new Notification("새로운 오전 마감 번호가 있습니다.", {
+            body: msg,
+          });
+
+          const { ipcRenderer } = require("electron");
+          ipcRenderer.sendSync("win-highligth", null);
         }
       } else {
         this.showBriefing = false;
       }
+
+      setTimeout(() => {
+        this.getData();
+      }, 5000);
     },
   },
   mounted() {
