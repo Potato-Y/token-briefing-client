@@ -23,9 +23,17 @@
         2000: {{ token2000 }}<br />
         3000: {{ token3000 }}<br />
         4000: {{ token4000 }}<br />
-        5000: {{ token5000 }}<br /><br />
-        [메모]<br />
-        {{ memo }}
+        5000: {{ token5000 }}<br />
+        <div v-if="memo != ''" class="font-background-transparency">
+          <br />
+          [메모]<br />
+          <span
+            class="font-background-transparency"
+            style="white-space: pre-wrap"
+          >
+            {{ memo }}</span
+          >
+        </div>
       </div>
     </div>
   </div>
@@ -132,6 +140,8 @@ export default {
           if (data.memo != "null") {
             msg += data.memo;
             this.memo = data.memo;
+          } else {
+            this.memo = "";
           }
 
           new Notification("새로운 오전 마감 번호가 있습니다.", {
