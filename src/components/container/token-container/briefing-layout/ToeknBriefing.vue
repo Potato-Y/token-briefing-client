@@ -18,7 +18,7 @@
         시간: {{ updateDate.split(" ")[0] }}
         {{ updateDate.split(" ")[1] }}
         <br />
-        작성자: {{ writter }}<br /><br />
+        작성자: {{ writer }}<br /><br />
         1000: {{ token1000 }}<br />
         2000: {{ token2000 }}<br />
         3000: {{ token3000 }}<br />
@@ -49,7 +49,7 @@ export default {
       /** 업데이트 날짜 */
       updateDate: "",
       /** 작성자 */
-      writter: "",
+      writer: "",
       /** 메모 */
       memo: "",
       token1000: "-",
@@ -116,7 +116,7 @@ export default {
             }
           };
 
-          this.writter = data.writter;
+          this.writer = data.writer;
           this.updateDate = data.date;
 
           setTokenNum((num) => {
@@ -135,14 +135,14 @@ export default {
             this.token5000 = num;
           }, data.token5000);
 
-          this.showBriefing = true;
-
           if (data.memo != "null") {
             msg += data.memo;
             this.memo = data.memo;
           } else {
             this.memo = "";
           }
+
+          this.showBriefing = true;
 
           new Notification("새로운 오전 마감 번호가 있습니다.", {
             body: msg,
