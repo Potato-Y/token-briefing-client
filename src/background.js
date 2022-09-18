@@ -13,7 +13,7 @@ let win;
 async function createWindow() {
   // Create the browser window.
   win = new BrowserWindow({
-    width: 800,
+    width: 830,
     height: 600,
     resizable: false,
     webPreferences: {
@@ -85,7 +85,7 @@ if (isDevelopment) {
 import ipcMapping from './electronbackend/electronIPC';
 new ipcMapping(ipcMain);
 
-// sdafasdfㅁㅇㄻㄴㅇㄹ
+// 작업표시줄 아이콘이 반응
 ipcMain.on('win-highligth', () => {
   win.once('focus', () => win.flashFrame(false));
   return win.flashFrame(true);
