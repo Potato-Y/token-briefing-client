@@ -22,8 +22,9 @@ async function createWindow() {
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
     },
-    autoHideMenuBar: false,
   });
+
+  win.setMenuBarVisibility(false); //메뉴바 없애기
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
