@@ -1,11 +1,13 @@
 #token-container-body {
   padding: 10px;
   padding-top: 20px;
+  height: 550px;
 }
 
 #token-container-title {
   font-family: 'NanumSquareRoundEB' !important;
   font-size: 23px;
+  margin-bottom: 10px;
 }
 
 /* Token 작성 패널 전체 묶음 */
@@ -16,7 +18,7 @@
 
   overflow: hidden;
   border-radius: 5px;
-  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 /* Token 작성 패널 속 컨텐츠 묶음 */
@@ -25,4 +27,17 @@
   height: 90%;
 
   overflow: hidden;
+}
+
+.button-upload {
+  margin-top: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
+  float: right;
+
+  background-color: #9bc6ff;
+  border: none;
+  border-radius: 5px;
 }

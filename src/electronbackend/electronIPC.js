@@ -16,6 +16,7 @@ class ElectronIPC {
     this.getClientSetting();
     this.setServerIpUserName();
     this.apiTokenbriefingLast_latest_post();
+    this.apiTokenbriefingUpload();
   }
 
   /** 프로그램에 필요한 DB 연결 및 내용 로드 */
@@ -55,6 +56,28 @@ class ElectronIPC {
         })
         .catch((err) => {
           console.log('err channel: api-tokenbriefing-last_latest_post\n' + err);
+          event.returnValue = false;
+        });
+    });
+  }
+
+  /** 토큰 브리핑 업로드 */
+  apiTokenbriefingUpload() {
+    this.ipcMain.on('api-tokenbriefing-upload', (event, arg) => {
+      axios
+        .post(`http://${this.serverIp}/api/v1/tokenbriefing/upload`, arg)
+        .then((response) => {
+          const process = response.data.process;
+          console.log(`token briefing upload process ${process}`);
+
+          if (process == true) {
+            event.returnValue = true;
+          } else {
+            event.returnValue = false;
+          }
+        })
+        .catch((err) => {
+          console.log('err channel: api-tokenbriefing-upload\n' + err);
           event.returnValue = false;
         });
     });
