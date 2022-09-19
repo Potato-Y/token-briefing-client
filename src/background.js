@@ -8,10 +8,12 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: true, standard: true } }]);
 
+let win;
+
 async function createWindow() {
   // Create the browser window.
-  const win = new BrowserWindow({
-    width: 800,
+  win = new BrowserWindow({
+    width: 830,
     height: 600,
     resizable: false,
     webPreferences: {
@@ -21,6 +23,8 @@ async function createWindow() {
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
     },
   });
+
+  win.setMenuBarVisibility(false); //메뉴바 없애기
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
@@ -80,3 +84,9 @@ if (isDevelopment) {
 
 import ipcMapping from './electronbackend/electronIPC';
 new ipcMapping(ipcMain);
+
+// 작업표시줄 아이콘이 반응
+ipcMain.on('win-highligth', () => {
+  win.once('focus', () => win.flashFrame(false));
+  return win.flashFrame(true);
+});
