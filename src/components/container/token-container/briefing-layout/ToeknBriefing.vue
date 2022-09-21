@@ -60,108 +60,107 @@ export default {
     };
   },
   methods: {
-    /** api 서버에서 정보를 가져오기 */
-    getData() {
+    setData() {
       console.log("최신 브리핑 데이터를 로드합니다.");
       const { ipcRenderer } = require("electron");
-      let req = ipcRenderer.sendSync(
-        "api-tokenbriefing-last_latest_post",
-        null
-      );
 
-      if (req.tokenbriefingDbData != undefined) {
-        // 가져온 값이 없으면 패스
-        this.dataSet(req.tokenbriefingDbData);
-      }
-    },
-    /**
-     * api서버에서 받아온 데이터를 변수에 저장하고 필요시 화면을 바꾼다.
-     * @param {Json} req ipcMain에서 보내온 data.tokenbriefingDbData를 넣어주세요.
-     */
-    dataSet(data) {
-      const localDate = new Date(); // locale 시간
+      /**
+       * api서버에서 받아온 데이터를 변수에 저장하고 필요시 화면을 바꾼다.
+       */
+      const set = () => {
+        // api 불러오기
+        const req = ipcRenderer.sendSync(
+          "api-tokenbriefing-last_latest_post",
+          null
+        );
 
-      let nowTimeYear = localDate.getFullYear();
-      let nowTimeMonth = ("00" + (localDate.getMonth() + 1)).slice(-2);
-      let nowTimeDate = ("00" + localDate.getDate()).slice(-2);
+        if (req.tokenbriefingDbData != undefined) {
+          // 가져온 값이 없으면 패스
+          // this.dataSet(req.tokenbriefingDbData);
 
-      // 현재 시간 (처리 시간)
-      const date = `${nowTimeYear}-${nowTimeMonth}-${nowTimeDate}`;
+          const dbData = req.tokenbriefingDbData;
 
-      if (date == data.date.split(" ")[0]) {
-        // 오늘 것이 맞으면 실행
+          const localDate = new Date(); // locale 시간
 
-        // console.log(
-        //   this.updateDate + "\n" + data.updateDate + "\n" + this.updateDate ==
-        //     data.updateDate
-        // );
+          let nowTimeYear = localDate.getFullYear();
+          let nowTimeMonth = ("00" + (localDate.getMonth() + 1)).slice(-2);
+          let nowTimeDate = ("00" + localDate.getDate()).slice(-2);
 
-        if (this.updateDate != data.date) {
-          // 만약 새로운 내용이 있다면 실행
+          // 현재 시간 (처리 시간)
+          const date = `${nowTimeYear}-${nowTimeMonth}-${nowTimeDate}`;
 
-          /** Notification으로 보낼 메시지 내용 추가 */
-          let msg = "";
+          if (date == dbData.date.split(" ")[0]) {
+            // 오늘 것이 맞으면 실행
 
-          /**
-           * 새로운 정보 저장하기
-           * @param setFun 변수에 저장할 기능
-           * @param dataNum ex) data.token1000
-           */
-          const setTokenNum = (setFun, dataNum) => {
-            if (dataNum == null) {
-              setFun("-");
-            } else {
-              setFun(dataNum);
-              msg += dataNum + " ";
+            if (this.updateDate != dbData.date) {
+              // 만약 새로운 내용이 있다면 실행
+
+              /** Notification으로 보낼 메시지 내용 추가 */
+              let msg = "";
+
+              /**
+               * 새로운 정보 저장하기
+               * @param setFun 변수에 저장할 기능
+               * @param dataNum ex) data.token1000
+               */
+              const setTokenNum = (setFun, dataNum) => {
+                if (dataNum == null) {
+                  setFun("-");
+                } else {
+                  setFun(dataNum);
+                  msg += dataNum + " ";
+                }
+              };
+
+              this.writer = dbData.writer;
+              this.updateDate = dbData.date;
+
+              setTokenNum((num) => {
+                this.token1000 = num;
+              }, dbData.token1000);
+              setTokenNum((num) => {
+                this.token2000 = num;
+              }, dbData.token2000);
+              setTokenNum((num) => {
+                this.token3000 = num;
+              }, dbData.token3000);
+              setTokenNum((num) => {
+                this.token4000 = num;
+              }, dbData.token4000);
+              setTokenNum((num) => {
+                this.token5000 = num;
+              }, dbData.token5000);
+
+              if (dbData.memo != "null") {
+                msg += dbData.memo;
+                this.memo = dbData.memo;
+              } else {
+                this.memo = "";
+              }
+
+              this.showBriefing = true;
+
+              new Notification("새로운 오전 마감 번호가 있습니다.", {
+                body: msg,
+              });
+
+              const { ipcRenderer } = require("electron");
+              ipcRenderer.send("win-highligth");
             }
-          };
-
-          this.writer = data.writer;
-          this.updateDate = data.date;
-
-          setTokenNum((num) => {
-            this.token1000 = num;
-          }, data.token1000);
-          setTokenNum((num) => {
-            this.token2000 = num;
-          }, data.token2000);
-          setTokenNum((num) => {
-            this.token3000 = num;
-          }, data.token3000);
-          setTokenNum((num) => {
-            this.token4000 = num;
-          }, data.token4000);
-          setTokenNum((num) => {
-            this.token5000 = num;
-          }, data.token5000);
-
-          if (data.memo != "null") {
-            msg += data.memo;
-            this.memo = data.memo;
           } else {
-            this.memo = "";
+            this.showBriefing = false;
           }
 
-          this.showBriefing = true;
-
-          new Notification("새로운 오전 마감 번호가 있습니다.", {
-            body: msg,
-          });
-
-          const { ipcRenderer } = require("electron");
-          ipcRenderer.send("win-highligth");
+          setTimeout(() => {
+            set();
+          }, 5000);
         }
-      } else {
-        this.showBriefing = false;
-      }
-
-      setTimeout(() => {
-        this.getData();
-      }, 5000);
+      };
+      set();
     },
   },
   mounted() {
-    this.getData();
+    this.setData();
   },
 };
 </script>
