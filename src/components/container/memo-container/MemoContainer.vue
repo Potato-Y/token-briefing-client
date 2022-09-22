@@ -81,7 +81,7 @@ export default {
        * 5초마다 새로운 정보를 로드하도록 수정
        */
       const setData = () => {
-        console.log("최신 메모 데이터를 로드합니다." + this.update);
+        console.log("최신 메모 데이터를 로드합니다.");
 
         // ipcMain으로 api 데이터 요청
         let req = ipcRenderer.sendSync("api-memo-today-all");
@@ -94,8 +94,6 @@ export default {
             // 최신 정보 저장
             this.update = req.lastUpdate;
             this.data = req.memoDbData.reverse();
-
-            console.log(this.update);
 
             if (this.firstNoti == false) {
               // 만약 첫 로드라면 이미 창이 열려있을 것을 감안하여 알림을 보내지 않는다.
