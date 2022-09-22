@@ -4,6 +4,11 @@
       <span class="memo-post-header">
         {{ writer }} | {{ date.split(" ")[0] }}
         <span style="font-weight: bold">{{ date.split(" ")[1] }}</span>
+        <span
+          style="cursor: pointer; float: right; margin-right: 5px"
+          @click="deleteMemo"
+          >[삭제]</span
+        >
       </span>
       <div class="memo-post-wrap">
         <div class="memo-content-wrap font-background-transparency">
@@ -22,11 +27,34 @@ export default {
     date: String,
     content: String,
     memoKey: Number,
+    memoReload: Function,
   },
-  data() {
-    return {};
+  methods: {
+    deleteMemo() {
+      if (!confirm("해당 메모를 삭제하시겠습니까?")) {
+        return;
+      }
+
+      console.log("메모를 삭제합니다.");
+
+      let data = "";
+      const addData = (id, contents) => {
+        // post로 보내기 위해 data에 양식에 맞게 저장한다.
+        data += `${id}=${contents}&`;
+      };
+
+      addData("key", this.memoKey);
+
+      const { ipcRenderer } = require("electron");
+
+      if (ipcRenderer.sendSync("api-memo-delete", data) == true) {
+        this.memoReload();
+        alert("삭제되었습니다. 곧 반영됩니다.");
+      } else {
+        alert("삭제에 실패하였습니다.");
+      }
+    },
   },
-  mounted() {},
 };
 </script>
 

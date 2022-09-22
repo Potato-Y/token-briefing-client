@@ -20,6 +20,7 @@
         :writer="item.writer"
         :date="item.date"
         :content="item.content"
+        :memoReload="memoReload"
       />
     </div>
   </div>
@@ -49,23 +50,25 @@ export default {
           this.mode = "read";
           this.newMemoButtonText = "새 메모";
 
-          console.log("메모 쓰기를 닫아 데이터를 다시 로드합니다.");
-          const { ipcRenderer } = require("electron");
+          this.memoReload();
+        }
+      },
+      memoReload: () => {
+        console.log("메모 데이터를 다시 로드합니다.");
+        const { ipcRenderer } = require("electron");
+        let req = ipcRenderer.sendSync("api-memo-today-all");
 
-          let req = ipcRenderer.sendSync("api-memo-today-all");
+        if (req.memoDbData != undefined) {
+          // 가져온 값이 없다면 5초 후 재호출로 바로 넘어간다.
 
-          if (req.memoDbData != undefined) {
-            // 가져온 값이 없다면 5초 후 재호출로 바로 넘어간다.
-
-            // 새로운 업데이트 내용을 확인한 후 데이터를 저장한다.
-            if (req.lastUpdate != this.update) {
-              // 최신 정보 저장
-              this.update = req.lastUpdate;
-              this.data = req.memoDbData.reverse();
-            }
-          } else {
-            this.data = [];
+          // 새로운 업데이트 내용을 확인한 후 데이터를 저장한다.
+          if (req.lastUpdate != this.update) {
+            // 최신 정보 저장
+            this.update = req.lastUpdate;
+            this.data = req.memoDbData.reverse();
           }
+        } else {
+          this.data = [];
         }
       },
     };
@@ -78,7 +81,7 @@ export default {
        * 5초마다 새로운 정보를 로드하도록 수정
        */
       const setData = () => {
-        console.log("최신 메모 데이터를 로드합니다.");
+        console.log("최신 메모 데이터를 로드합니다." + this.update);
 
         // ipcMain으로 api 데이터 요청
         let req = ipcRenderer.sendSync("api-memo-today-all");
@@ -92,10 +95,12 @@ export default {
             this.update = req.lastUpdate;
             this.data = req.memoDbData.reverse();
 
+            console.log(this.update);
+
             if (this.firstNoti == false) {
               // 만약 첫 로드라면 이미 창이 열려있을 것을 감안하여 알림을 보내지 않는다.
-              new Notification("새로운 메모가 있습니다.", {
-                body: "새로운 메모가 있습니다.",
+              new Notification("메모 안내", {
+                body: "메모에 변경 사항이 있습니다.",
               });
               ipcRenderer.send("win-highligth");
             }
