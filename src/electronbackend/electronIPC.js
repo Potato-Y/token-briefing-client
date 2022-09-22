@@ -17,6 +17,9 @@ class ElectronIPC {
     this.setServerIpUserName();
     this.apiTokenbriefingLast_latest_post();
     this.apiTokenbriefingUpload();
+    this.apiMemoTodayAll();
+    this.apiMemocontentsUpload();
+    this.apiMemoDelete();
   }
 
   /** 프로그램에 필요한 DB 연결 및 내용 로드 */
@@ -56,6 +59,63 @@ class ElectronIPC {
         })
         .catch((err) => {
           console.log('err channel: api-tokenbriefing-last_latest_post\n' + err);
+          event.returnValue = false;
+        });
+    });
+  }
+
+  /** 당일 전체 메모를 불러오기 */
+  apiMemoTodayAll() {
+    this.ipcMain.on('api-memo-today-all', (event) => {
+      axios
+        .get(`http://${this.serverIp}/api/v1/memo/today_all`)
+        .then((response) => {
+          event.returnValue = response.data;
+        })
+        .catch((err) => {
+          console.log('err channel: api-memo-today-all\n' + err);
+        });
+    });
+  }
+
+  apiMemocontentsUpload() {
+    this.ipcMain.on('api-memo-upload', (event, arg) => {
+      axios
+        .post(`http://${this.serverIp}/api/v1/memo/upload`, arg)
+        .then((response) => {
+          const process = response.data.process;
+          console.log(`memo upload process: ${process}`);
+
+          if (process == true) {
+            event.returnValue = true;
+          } else {
+            event.returnValue = false;
+          }
+        })
+        .catch((err) => {
+          console.log('err channel: api-memo-upload\n' + err);
+          event.returnValue = false;
+        });
+    });
+  }
+
+  /** 메모 삭제 */
+  apiMemoDelete() {
+    this.ipcMain.on('api-memo-delete', (event, arg) => {
+      axios
+        .post(`http://${this.serverIp}/api/v1/memo/delete`, arg)
+        .then((response) => {
+          const process = response.data.process;
+          console.log(`memo delete process: ${process}`);
+
+          if (process == true) {
+            event.returnValue = true;
+          } else {
+            event.returnValue = false;
+          }
+        })
+        .catch((err) => {
+          console.log('err channel: api-memo-delete\n' + err);
           event.returnValue = false;
         });
     });
