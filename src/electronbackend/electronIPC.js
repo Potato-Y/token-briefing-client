@@ -37,7 +37,7 @@ class ElectronIPC {
   apiServerCheck() {
     this.ipcMain.on('api-server-check', (event, arg) => {
       axios
-        .get(`http://${arg}/api/v1/status/`)
+        .get(`http://${arg}/api/v1/status/`, { timeout: 3000 })
         .then((response) => {
           console.log('서버 연결: ' + response.data.status);
           event.returnValue = true;
@@ -53,7 +53,7 @@ class ElectronIPC {
   apiTokenbriefingLast_latest_post() {
     this.ipcMain.on('api-tokenbriefing-last_latest_post', (event) => {
       axios
-        .get(`http://${this.serverIp}/api/v1/tokenbriefing/last_latest_post`)
+        .get(`http://${this.serverIp}/api/v1/tokenbriefing/last_latest_post`, { timeout: 3000 })
         .then((response) => {
           event.returnValue = response.data;
         })
@@ -68,7 +68,7 @@ class ElectronIPC {
   apiMemoTodayAll() {
     this.ipcMain.on('api-memo-today-all', (event) => {
       axios
-        .get(`http://${this.serverIp}/api/v1/memo/today_all`)
+        .get(`http://${this.serverIp}/api/v1/memo/today_all`, { timeout: 3000 })
         .then((response) => {
           event.returnValue = response.data;
         })
@@ -81,7 +81,7 @@ class ElectronIPC {
   apiMemocontentsUpload() {
     this.ipcMain.on('api-memo-upload', (event, arg) => {
       axios
-        .post(`http://${this.serverIp}/api/v1/memo/upload`, arg)
+        .post(`http://${this.serverIp}/api/v1/memo/upload`, arg, { timeout: 3000 })
         .then((response) => {
           const process = response.data.process;
           console.log(`memo upload process: ${process}`);
@@ -103,7 +103,7 @@ class ElectronIPC {
   apiMemoDelete() {
     this.ipcMain.on('api-memo-delete', (event, arg) => {
       axios
-        .post(`http://${this.serverIp}/api/v1/memo/delete`, arg)
+        .post(`http://${this.serverIp}/api/v1/memo/delete`, arg, { timeout: 3000 })
         .then((response) => {
           const process = response.data.process;
           console.log(`memo delete process: ${process}`);
@@ -125,7 +125,7 @@ class ElectronIPC {
   apiTokenbriefingUpload() {
     this.ipcMain.on('api-tokenbriefing-upload', (event, arg) => {
       axios
-        .post(`http://${this.serverIp}/api/v1/tokenbriefing/upload`, arg)
+        .post(`http://${this.serverIp}/api/v1/tokenbriefing/upload`, arg, { timeout: 3000 })
         .then((response) => {
           const process = response.data.process;
           console.log(`token briefing upload process ${process}`);
