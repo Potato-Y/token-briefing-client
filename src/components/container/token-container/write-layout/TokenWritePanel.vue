@@ -142,7 +142,7 @@ export default {
       const { ipcRenderer } = require("electron");
 
       // api에 보낼 데이터 생성
-      var data = "";
+      let data = "";
       const addData = (id, contents) => {
         // post로 보내기 위해 data에 양식에 맞게 저장한다.
         data += `${id}=${contents}&`;
