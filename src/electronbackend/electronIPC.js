@@ -1,5 +1,6 @@
 import axios from 'axios';
 import db from './db/dbController/DBController.js';
+import log from 'electron-log';
 
 class ElectronIPC {
   constructor(ipc) {
@@ -39,11 +40,11 @@ class ElectronIPC {
       axios
         .get(`http://${arg}/api/v1/status/`, { timeout: 3000 })
         .then((response) => {
-          console.log('서버 연결: ' + response.data.status);
+          log.info('서버 연결: ' + response.data.status);
           event.returnValue = true;
         })
         .catch((err) => {
-          console.log('err channel: api-server-check\n' + err);
+          log.info('err channel: api-server-check\n' + err);
           event.returnValue = false;
         });
     });
@@ -58,7 +59,7 @@ class ElectronIPC {
           event.returnValue = response.data;
         })
         .catch((err) => {
-          console.log('err channel: api-tokenbriefing-last_latest_post\n' + err);
+          log.info('err channel: api-tokenbriefing-last_latest_post\n' + err);
           event.returnValue = false;
         });
     });
@@ -73,7 +74,7 @@ class ElectronIPC {
           event.returnValue = response.data;
         })
         .catch((err) => {
-          console.log('err channel: api-memo-today-all\n' + err);
+          log.info('err channel: api-memo-today-all\n' + err);
         });
     });
   }
@@ -84,7 +85,7 @@ class ElectronIPC {
         .post(`http://${this.serverIp}/api/v1/memo/upload`, arg, { timeout: 3000 })
         .then((response) => {
           const process = response.data.process;
-          console.log(`memo upload process: ${process}`);
+          log.info(`memo upload process: ${process}`);
 
           if (process == true) {
             event.returnValue = true;
@@ -93,7 +94,7 @@ class ElectronIPC {
           }
         })
         .catch((err) => {
-          console.log('err channel: api-memo-upload\n' + err);
+          log.info('err channel: api-memo-upload\n' + err);
           event.returnValue = false;
         });
     });
@@ -106,7 +107,7 @@ class ElectronIPC {
         .post(`http://${this.serverIp}/api/v1/memo/delete`, arg, { timeout: 3000 })
         .then((response) => {
           const process = response.data.process;
-          console.log(`memo delete process: ${process}`);
+          log.info(`memo delete process: ${process}`);
 
           if (process == true) {
             event.returnValue = true;
@@ -115,7 +116,7 @@ class ElectronIPC {
           }
         })
         .catch((err) => {
-          console.log('err channel: api-memo-delete\n' + err);
+          log.info('err channel: api-memo-delete\n' + err);
           event.returnValue = false;
         });
     });
@@ -128,7 +129,7 @@ class ElectronIPC {
         .post(`http://${this.serverIp}/api/v1/tokenbriefing/upload`, arg, { timeout: 3000 })
         .then((response) => {
           const process = response.data.process;
-          console.log(`token briefing upload process ${process}`);
+          log.info(`token briefing upload process ${process}`);
 
           if (process == true) {
             event.returnValue = true;
@@ -137,7 +138,7 @@ class ElectronIPC {
           }
         })
         .catch((err) => {
-          console.log('err channel: api-tokenbriefing-upload\n' + err);
+          log.info('err channel: api-tokenbriefing-upload\n' + err);
           event.returnValue = false;
         });
     });
