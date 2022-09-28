@@ -74,17 +74,17 @@ export default {
     };
   },
   methods: {
-    getData() {
+    setData() {
       const { ipcRenderer } = require("electron");
 
       /**
        * 5초마다 새로운 정보를 로드하도록 수정
        */
-      const setData = () => {
+      const set = () => {
         console.log("최신 메모 데이터를 로드합니다.");
 
         // ipcMain으로 api 데이터 요청
-        let req = ipcRenderer.sendSync("api-memo-today-all");
+        const req = ipcRenderer.sendSync("api-memo-today-all");
 
         if (req.memoDbData != undefined) {
           // 가져온 값이 없다면 5초 후 재호출로 바로 넘어간다.
@@ -112,16 +112,16 @@ export default {
 
         /** 5초마다 새로운 메모 정보 로드 */
         setTimeout(() => {
-          setData();
+          set();
         }, 5000);
       };
 
       // 첫 실행 시작
-      setData();
+      set();
     },
   },
   mounted() {
-    this.getData();
+    this.setData();
   },
   components: { MemoItem, MemoWritePanel },
 };
