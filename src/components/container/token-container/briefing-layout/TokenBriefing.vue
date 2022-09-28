@@ -164,7 +164,3 @@ export default {
   },
 };
 </script>
-
-<style>
-@import url("./ToeknBriefing.css");
-</style>

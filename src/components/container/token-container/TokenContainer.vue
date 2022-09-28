@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import ToeknBriefing from "./briefing-layout/ToeknBriefing.vue";
+import ToeknBriefing from "./briefing-layout/TokenBriefing.vue";
 import TokenWritePanel from "./write-layout/TokenWritePanel.vue";
 export default {
   name: "TokenContainer",
