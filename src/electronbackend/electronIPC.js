@@ -75,6 +75,7 @@ class ElectronIPC {
         })
         .catch((err) => {
           log.info('err channel: api-memo-today-all\n' + err);
+          event.returnValue = false;
         });
     });
   }
@@ -167,10 +168,14 @@ class ElectronIPC {
   /** 렌더에서 설정한 serverIp와 userName을 DB에 저장하는 ipc */
   setServerIpUserName() {
     this.ipcMain.on('set-serverip-username', (event, args) => {
-      if (this.dbController.updateUserNameAndServerIp(event, args) == true) {
+      // if (this.dbController.updateUserNameAndServerIp(event, args) == true) {
+      //   this.serverIp = args.serverIp;
+      //   this.userName = args.userName;
+      // }
+      this.dbController.updateUserNameAndServerIp(event, args, () => {
         this.serverIp = args.serverIp;
         this.userName = args.userName;
-      }
+      });
     });
   }
 }

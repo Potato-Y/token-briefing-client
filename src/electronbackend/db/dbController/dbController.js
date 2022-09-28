@@ -109,7 +109,7 @@ class DBController {
    * @param  args ipcMain args
    * @returns 작업이 정상 완료될 경우 true를 리턴
    */
-  updateUserNameAndServerIp(event, args) {
+  updateUserNameAndServerIp(event, args, saveFun) {
     this.db.serialize();
 
     this.db.run(
@@ -129,6 +129,7 @@ class DBController {
         } else {
           log.info('[updateUserNameAndServerIp] 성공');
           event.returnValue = true;
+          saveFun();
 
           return true;
         }
