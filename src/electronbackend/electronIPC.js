@@ -3,13 +3,14 @@ import db from './db/dbController/DBController.js';
 import log from 'electron-log';
 
 class ElectronIPC {
-  constructor(ipc) {
+  constructor(ipc, dir) {
     this.ipcMain = ipc;
     this.dbController;
     this.userName = '\\Not Loading\\';
     this.serverIp = '\\Not Loading\\';
     /** dbLoad가 정상적으로 안된 경우 횟수 체크 */
     this.errStack = 0;
+    this.dir = dir;
 
     this.dbLoad();
 
@@ -25,7 +26,7 @@ class ElectronIPC {
 
   /** 프로그램에 필요한 DB 연결 및 내용 로드 */
   dbLoad() {
-    this.dbController = new db();
+    this.dbController = new db(this.dir);
     this.dbController.connectDB();
 
     this.dbController.getUserNameAndServerIp((userName, serverIp) => {

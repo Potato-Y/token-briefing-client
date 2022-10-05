@@ -98,7 +98,11 @@ if (isDevelopment) {
   directoryPath = path.join(__dirname, '../');
 } else {
   // 만약 배포 모드라면
-  directoryPath = path.join(__dirname, '../../../../');
+  if (process.platform === 'win32') {
+    directoryPath = path.join(__dirname, '../../');
+  } else {
+    directoryPath = path.join(__dirname, '../../../../');
+  }
 }
 
 // 현재 디렉토리에 대해 로그 생성
@@ -106,7 +110,7 @@ log.info('App run path: ' + __dirname);
 log.info('App setting path: ' + directoryPath);
 
 import ipcMapping from './electronbackend/electronIPC';
-new ipcMapping(ipcMain);
+new ipcMapping(ipcMain, directoryPath);
 
 // 작업표시줄 아이콘이 반응
 ipcMain.on('win-highligth', () => {

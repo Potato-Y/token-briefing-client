@@ -4,18 +4,19 @@ const path = require('path');
 const log = require('electron-log');
 
 const APPLY_DB_VERSION = 1;
-const DB_NAME = path.join(__dirname, '../Data', 'token-briefing-client.sqlite');
 
 class DBController {
-  constructor() {
+  constructor(dir) {
     this.db;
     this.lastLatestDBVersion = 1;
+    this.dir = dir;
+    this.db_name = path.join(dir, 'Data', 'token-briefing-client.sqlite');
   }
 
   connectDB() {
-    makeFoler('./Data'); //디렉터리가 없으면 생성
+    makeFoler(path.join(this.dir, './Data')); //디렉터리가 없으면 생성
 
-    this.db = new sqlite3.Database(DB_NAME, (err) => {
+    this.db = new sqlite3.Database(this.db_name, (err) => {
       if (err) {
         return log.error('err: ' + err);
       }
