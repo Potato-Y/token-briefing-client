@@ -20,6 +20,8 @@
 </template>
 
 <script>
+import log from "electron-log";
+
 export default {
   name: "MemoItem",
   props: {
@@ -35,7 +37,7 @@ export default {
         return;
       }
 
-      console.log("메모를 삭제합니다.");
+      log.info("메모를 삭제합니다.");
 
       let data = "";
       const addData = (id, contents) => {

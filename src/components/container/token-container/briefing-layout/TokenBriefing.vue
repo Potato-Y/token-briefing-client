@@ -40,6 +40,8 @@
 </template>
 
 <script>
+import log from "electron-log";
+
 export default {
   name: "TokenBriefing",
   data() {
@@ -67,7 +69,7 @@ export default {
        * api서버에서 받아온 데이터를 변수에 저장하고 필요시 화면을 바꾼다.
        */
       const set = () => {
-        console.log("최신 브리핑 데이터를 로드합니다.");
+        log.info("최신 브리핑 데이터를 로드합니다.");
 
         // api 불러오기
         const req = ipcRenderer.sendSync(

@@ -27,6 +27,7 @@
 </template>
 
 <script>
+import log from "electron-log";
 import MemoItem from "./MemoItem.vue";
 import MemoWritePanel from "./MemoWritePanel.vue";
 export default {
@@ -54,7 +55,7 @@ export default {
         }
       },
       memoReload: () => {
-        console.log("메모 데이터를 다시 로드합니다.");
+        log.info("메모 데이터를 다시 로드합니다.");
         const { ipcRenderer } = require("electron");
         let req = ipcRenderer.sendSync("api-memo-today-all");
 
@@ -81,7 +82,7 @@ export default {
        * 5초마다 새로운 정보를 로드하도록 수정
        */
       const set = () => {
-        console.log("최신 메모 데이터를 로드합니다.");
+        log.info("최신 메모 데이터를 로드합니다.");
 
         // ipcMain으로 api 데이터 요청
         const req = ipcRenderer.sendSync("api-memo-today-all");
