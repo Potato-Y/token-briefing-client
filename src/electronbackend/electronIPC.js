@@ -3,13 +3,14 @@ import db from './db/dbController/DBController.js';
 import log from 'electron-log';
 
 class ElectronIPC {
-  constructor(ipc) {
+  constructor(ipc, dir) {
     this.ipcMain = ipc;
     this.dbController;
     this.userName = '\\Not Loading\\';
     this.serverIp = '\\Not Loading\\';
     /** dbLoad가 정상적으로 안된 경우 횟수 체크 */
     this.errStack = 0;
+    this.dir = dir;
 
     this.dbLoad();
 
@@ -25,7 +26,7 @@ class ElectronIPC {
 
   /** 프로그램에 필요한 DB 연결 및 내용 로드 */
   dbLoad() {
-    this.dbController = new db();
+    this.dbController = new db(this.dir);
     this.dbController.connectDB();
 
     this.dbController.getUserNameAndServerIp((userName, serverIp) => {
@@ -75,6 +76,7 @@ class ElectronIPC {
         })
         .catch((err) => {
           log.info('err channel: api-memo-today-all\n' + err);
+          event.returnValue = false;
         });
     });
   }
@@ -167,10 +169,14 @@ class ElectronIPC {
   /** 렌더에서 설정한 serverIp와 userName을 DB에 저장하는 ipc */
   setServerIpUserName() {
     this.ipcMain.on('set-serverip-username', (event, args) => {
-      if (this.dbController.updateUserNameAndServerIp(event, args) == true) {
+      // if (this.dbController.updateUserNameAndServerIp(event, args) == true) {
+      //   this.serverIp = args.serverIp;
+      //   this.userName = args.userName;
+      // }
+      this.dbController.updateUserNameAndServerIp(event, args, () => {
         this.serverIp = args.serverIp;
         this.userName = args.userName;
-      }
+      });
     });
   }
 }

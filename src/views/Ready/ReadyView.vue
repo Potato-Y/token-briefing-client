@@ -26,6 +26,8 @@
 
 <script>
 import AppReady from "@/components/AppReady.vue";
+import log from "electron-log";
+
 export default {
   name: "ReadyView",
   props: {
@@ -57,13 +59,13 @@ export default {
     /** 클라이언트 세팅값을 렌더로 가지고 오기 */
     getClientSetting() {
       const { ipcRenderer } = require("electron");
-      console.log("getClientSetting()");
+      log.info("getClientSetting()");
       let data = ipcRenderer.sendSync("get-client-setting", null);
 
       if (data.userName == "\\Not Loading\\") {
         // 만약 아직 로딩 전이면 2초 뒤 재시도
         return setTimeout(() => {
-          console.log(data);
+          log.info(data);
           this.getClientSetting();
         }, 2000);
       } else if (data.userName != "not found" || data.serverIp != "not found") {
@@ -72,7 +74,7 @@ export default {
         this.userName = data.userName;
 
         const check = () => {
-          console.log("서버 연결을 시도합니다.");
+          log.info("서버 연결을 시도합니다.");
           if (this.appReady == false) {
             //만약 앱 준비 상태가 아닌 기본 설정으로 이동할 경우 종료
             return;
@@ -95,7 +97,7 @@ export default {
         check();
       } else {
         // 로딩이 완료된 경우 기본 설정 페이지로 화면을 변경
-        console.log("설정값을 불러왔습니다.");
+        log.info("설정값을 불러왔습니다.");
         this.appReady = false;
       }
     },
@@ -103,7 +105,7 @@ export default {
     serverCheck() {
       // ipc를 통해 electron main에 axios 요청
       const { ipcRenderer } = require("electron");
-      console.log("서버 주소를 확인합니다.");
+      log.info("서버 주소를 확인합니다.");
       if (ipcRenderer.sendSync("api-server-check", this.serverIp) == true) {
         this.serverStateText = "연결 가능";
         this.startButtonLock = false;
@@ -125,11 +127,11 @@ export default {
           userName: this.userName,
         }) == true
       ) {
-        console.log("db 업데이트 완료");
+        log.info("db 업데이트 완료");
         this.changeMainPageLock(false);
       } else {
         alert("저장에 실패하였습니다.");
-        console.log("db 업데이트 실패");
+        log.info("db 업데이트 실패");
       }
     },
   },

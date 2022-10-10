@@ -4,12 +4,15 @@ import { app, protocol, BrowserWindow, ipcMain } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer';
 import path from 'path';
+import log from 'electron-log';
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: true, standard: true } }]);
 
 let win;
+
+log.info('START');
 
 async function createWindow() {
   // Create the browser window.
@@ -84,8 +87,30 @@ if (isDevelopment) {
   }
 }
 
+/**
+ * 프로그램에서 사용할 디렉토리
+ */
+let directoryPath;
+
+// 배포, 개발 빌드에 따라 현재 위치를 지정한다.
+if (isDevelopment) {
+  // 만약 개발 모드라면
+  directoryPath = path.join(__dirname, '../');
+} else {
+  // 만약 배포 모드라면
+  if (process.platform === 'win32') {
+    directoryPath = path.join(__dirname, '../../');
+  } else {
+    directoryPath = path.join(__dirname, '../../../../');
+  }
+}
+
+// 현재 디렉토리에 대해 로그 생성
+log.info('App run path: ' + __dirname);
+log.info('App setting path: ' + directoryPath);
+
 import ipcMapping from './electronbackend/electronIPC';
-new ipcMapping(ipcMain);
+new ipcMapping(ipcMain, directoryPath);
 
 // 작업표시줄 아이콘이 반응
 ipcMain.on('win-highligth', () => {

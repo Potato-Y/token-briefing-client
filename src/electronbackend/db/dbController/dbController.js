@@ -4,18 +4,19 @@ const path = require('path');
 const log = require('electron-log');
 
 const APPLY_DB_VERSION = 1;
-const DB_NAME = path.join(__dirname, '../Data', 'token-briefing-client.sqlite');
 
 class DBController {
-  constructor() {
+  constructor(dir) {
     this.db;
     this.lastLatestDBVersion = 1;
+    this.dir = dir;
+    this.db_name = path.join(dir, 'Data', 'token-briefing-client.sqlite');
   }
 
   connectDB() {
-    makeFoler('./Data'); //디렉터리가 없으면 생성
+    makeFoler(path.join(this.dir, './Data')); //디렉터리가 없으면 생성
 
-    this.db = new sqlite3.Database(DB_NAME, (err) => {
+    this.db = new sqlite3.Database(this.db_name, (err) => {
       if (err) {
         return log.error('err: ' + err);
       }
@@ -109,7 +110,7 @@ class DBController {
    * @param  args ipcMain args
    * @returns 작업이 정상 완료될 경우 true를 리턴
    */
-  updateUserNameAndServerIp(event, args) {
+  updateUserNameAndServerIp(event, args, saveFun) {
     this.db.serialize();
 
     this.db.run(
@@ -129,6 +130,7 @@ class DBController {
         } else {
           log.info('[updateUserNameAndServerIp] 성공');
           event.returnValue = true;
+          saveFun();
 
           return true;
         }
