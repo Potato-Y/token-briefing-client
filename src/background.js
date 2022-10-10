@@ -5,6 +5,7 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer';
 import path from 'path';
 import log from 'electron-log';
+import fs from 'fs';
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
 // Scheme must be registered before the app is ready
@@ -99,7 +100,19 @@ if (isDevelopment) {
 } else {
   // 만약 배포 모드라면
   if (process.platform === 'win32') {
-    directoryPath = path.join(__dirname, '../../');
+    directoryPath = path.join(__dirname, '../../../../');
+
+    /** 새로운 폴더 만들기 */
+    const makeFoler = (dir) => {
+      if (!fs.existsSync(dir)) {
+        log.info('폴더를 생성합니다.\n * 생성 위치: ' + dir);
+        fs.mkdirSync(dir);
+      }
+    };
+
+    makeFoler(path.join(directoryPath, './token-briefing-client'));
+
+    directoryPath = path.join(directoryPath, 'token-briefing-client');
   } else {
     directoryPath = path.join(__dirname, '../../../../');
   }
