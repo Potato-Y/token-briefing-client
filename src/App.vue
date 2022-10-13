@@ -10,10 +10,7 @@
     </div>
 
     <!-- 프로그램 첫 실행 시 필수 진행 사항 -->
-    <ReadyView
-      :changeMainPageLock="changeMainPageLock"
-      v-if="mainPageLock == true"
-    />
+    <ReadyView :changeMainPageLock="changeMainPageLock" v-if="mainPageLock == true" />
   </div>
 </template>
 
@@ -34,6 +31,10 @@ export default {
       /** 메인 페이지 잠금 해제 */
       changeMainPageLock: (bool) => {
         this.mainPageLock = bool;
+
+        //잠금 해제와 함께 업데이트 확인
+        const { ipcRenderer } = require("electron");
+        ipcRenderer.send("api-check-app-update");
       },
     };
   },
@@ -41,7 +42,8 @@ export default {
 </script>
 
 <style>
-@import "./css-reset.css"; /* css 초기화 */
+@import "./css-reset.css";
+/* css 초기화 */
 
 /* 나눔 스퀘어 굵음 */
 @font-face {
@@ -58,7 +60,8 @@ export default {
 * {
   margin: 0;
   padding: 0;
-  font-family: "NanumGothic" !important; /* 폰트 적용 */
+  font-family: "NanumGothic" !important;
+  /* 폰트 적용 */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #9fb1bc;

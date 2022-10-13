@@ -2,6 +2,8 @@ import axios from 'axios';
 import db from './db/dbController/DBController.js';
 import log from 'electron-log';
 
+const appVer = '0.1.0';
+
 class ElectronIPC {
   constructor(ipc, dir) {
     this.ipcMain = ipc;
@@ -22,6 +24,26 @@ class ElectronIPC {
     this.apiMemoTodayAll();
     this.apiMemocontentsUpload();
     this.apiMemoDelete();
+    this.updateCheck();
+  }
+
+  updateCheck() {
+    this.ipcMain.on('api-check-app-update', (event, arg) => {
+      log.info('Checking for updates');
+
+      axios
+        .get(`http://${arg}/api/v1/client/release_version`, { timeout: 3000 })
+        .then((response) => {
+          log.info(`this version: ${appVer}\nserver version: ${response.data.version}`);
+
+          if (appVer !== response.data.version) {
+            // 앱 버전이 동일하지 않은 경우 업데이트 실행
+          }
+        })
+        .catch((err) => {
+          log.info('err channel: updateCheck()\n' + err);
+        });
+    });
   }
 
   /** 프로그램에 필요한 DB 연결 및 내용 로드 */
