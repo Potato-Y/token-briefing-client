@@ -1,5 +1,12 @@
 <template>
   <div>
+    <div class="black-bg" v-if="modalState == true">
+      <div class="white-bg ">
+        <p class="font-background-transparency">상세 내용</p>
+        <button class="button-close" @click="modalState = false">닫기</button>
+      </div>
+    </div>
+
     <div v-if="mainPageLock == false">
       <div class="wrap">
         <TitleBar />
@@ -10,10 +17,7 @@
     </div>
 
     <!-- 프로그램 첫 실행 시 필수 진행 사항 -->
-    <ReadyView
-      :changeMainPageLock="changeMainPageLock"
-      v-if="mainPageLock == true"
-    />
+    <ReadyView :changeMainPageLock="changeMainPageLock" v-if="mainPageLock == true" />
   </div>
 </template>
 
@@ -29,6 +33,7 @@ export default {
   },
   data() {
     return {
+      modalState: false,
       /** 메인 페이지 잠금 상태 */
       mainPageLock: true,
       /** 메인 페이지 잠금 해제 */
@@ -41,7 +46,8 @@ export default {
 </script>
 
 <style>
-@import "./css-reset.css"; /* css 초기화 */
+@import "./css-reset.css";
+/* css 초기화 */
 
 /* 나눔 스퀘어 굵음 */
 @font-face {
@@ -58,7 +64,8 @@ export default {
 * {
   margin: 0;
   padding: 0;
-  font-family: "NanumGothic" !important; /* 폰트 적용 */
+  font-family: "NanumGothic" !important;
+  /* 폰트 적용 */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #9fb1bc;
@@ -78,6 +85,33 @@ export default {
 .navlink-to-reset {
   color: #000000;
   text-decoration: none;
+}
+
+.black-bg {
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  padding: 20px;
+}
+
+.white-bg {
+  width: 90%;
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.button-close {
+  margin-top: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
+
+  background-color: #9bc6ff;
+  border: none;
+  border-radius: 5px;
 }
 
 /* 기존 내용 삭제 */
