@@ -1,12 +1,20 @@
 <template>
   <div>
+    <!-- 메모 삭제 확인 팝업 -->
+    <div class="white-bg-memo" v-if="showAlert == true">
+      <p class="font-background-transparency">해당 메모를 삭제하시겠습니까?</p>
+      <button class="button-close" @click="alertOk">삭제</button>
+      {{ " " }}
+      <button class="button-close" @click="alertCancel">닫기</button>
+    </div>
+
     <div class="all-wrap">
       <span class="memo-post-header">
         {{ writer }} | {{ date.split(" ")[0] }}
         <span style="font-weight: bold">{{ date.split(" ")[1] }}</span>
         <span
           style="cursor: pointer; float: right; margin-right: 5px"
-          @click="deleteMemo"
+          @click="showDeleteAlert"
           >[삭제]</span
         >
       </span>
@@ -24,6 +32,11 @@ import log from "electron-log";
 
 export default {
   name: "MemoItem",
+  data() {
+    return {
+      showAlert: false,
+    };
+  },
   props: {
     writer: String,
     date: String,
@@ -32,11 +45,17 @@ export default {
     memoReload: Function,
   },
   methods: {
+    showDeleteAlert() {
+      this.showAlert = true;
+    },
+    alertCancel() {
+      this.showAlert = false;
+    },
+    alertOk() {
+      this.showAlert = false;
+      this.deleteMemo();
+    },
     deleteMemo() {
-      if (!confirm("해당 메모를 삭제하시겠습니까?")) {
-        return;
-      }
-
       log.info("메모를 삭제합니다.");
 
       let data = "";
@@ -51,9 +70,9 @@ export default {
 
       if (ipcRenderer.sendSync("api-memo-delete", data) == true) {
         this.memoReload();
-        alert("삭제되었습니다. 곧 반영됩니다.");
+        this.$store.commit("setAlert", "삭제되었습니다. 곧 반영됩니다.");
       } else {
-        alert("삭제에 실패하였습니다.");
+        this.$store.commit("setAlert", "삭제에 실패하였습니다.");
       }
     },
   },
@@ -90,5 +109,25 @@ export default {
 
   line-height: 130%;
   white-space: pre-wrap;
+}
+
+.white-bg-memo {
+  margin-top: 10px;
+  width: 90%;
+  background: white;
+  border-radius: 5px;
+  padding: 20px;
+}
+
+.button-close {
+  margin-top: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
+
+  background-color: #9bc6ff;
+  border: none;
+  border-radius: 5px;
 }
 </style>
