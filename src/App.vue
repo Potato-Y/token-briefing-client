@@ -1,9 +1,11 @@
 <template>
   <div>
-    <div class="black-bg" v-if="modalState == true">
-      <div class="white-bg ">
-        <p class="font-background-transparency">상세 내용</p>
-        <button class="button-close" @click="modalState = false">닫기</button>
+    <div class="black-bg" v-if="this.$store.state.alertMsg.modalState == true">
+      <div class="white-bg">
+        <p class="font-background-transparency">
+          {{ this.$store.state.alertMsg.msg }}
+        </p>
+        <button class="button-close" @click="alertOff">닫기</button>
       </div>
     </div>
 
@@ -17,7 +19,10 @@
     </div>
 
     <!-- 프로그램 첫 실행 시 필수 진행 사항 -->
-    <ReadyView :changeMainPageLock="changeMainPageLock" v-if="mainPageLock == true" />
+    <ReadyView
+      :changeMainPageLock="changeMainPageLock"
+      v-if="mainPageLock == true"
+    />
   </div>
 </template>
 
@@ -33,7 +38,7 @@ export default {
   },
   data() {
     return {
-      modalState: false,
+      chageData: this.$store.state.alertMsg.msg,
       /** 메인 페이지 잠금 상태 */
       mainPageLock: true,
       /** 메인 페이지 잠금 해제 */
@@ -41,6 +46,11 @@ export default {
         this.mainPageLock = bool;
       },
     };
+  },
+  methods: {
+    alertOff() {
+      this.$store.commit("setAlertOff");
+    },
   },
 };
 </script>

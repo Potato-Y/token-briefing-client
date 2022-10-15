@@ -51,9 +51,9 @@ export default {
 
       if (ipcRenderer.sendSync("api-memo-delete", data) == true) {
         this.memoReload();
-        alert("삭제되었습니다. 곧 반영됩니다.");
+        this.$store.commit("setAlert", "삭제되었습니다. 곧 반영됩니다.");
       } else {
-        alert("삭제에 실패하였습니다.");
+        this.$store.commit("setAlert", "삭제에 실패하였습니다.");
       }
     },
   },
