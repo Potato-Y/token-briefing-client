@@ -99,39 +99,39 @@ export default {
       if (tokenNum == 1) {
         // 1000번대의 경우 1000~1999 의 범위를 가진다.
         if (inputValue > 1999) {
-          alert("1999보다 클 수 없습니다.");
+          this.$store.commit("setAlert", "1999보다 클 수 없습니다.");
           event.target.value = 1999;
         }
       } else if (tokenNum == 2) {
         if (inputValue < 2000) {
-          alert("2000보다 작을 수 없습니다.");
+          this.$store.commit("setAlert", "2000보다 작을 수 없습니다.");
           event.target.value = 2000;
         } else if (inputValue > 2999) {
-          alert("2999보다 클 수 없습니다.");
+          this.$store.commit("setAlert", "2999보다 클 수 없습니다.");
           event.target.value = 2999;
         }
       } else if (tokenNum == 3) {
         if (inputValue < 3000) {
-          alert("2000보다 작을 수 없습니다.");
+          this.$store.commit("setAlert", "2000보다 작을 수 없습니다.");
           event.target.value = 3000;
         } else if (inputValue > 3999) {
-          alert("3999보다 클 수 없습니다.");
+          this.$store.commit("setAlert", "3999보다 클 수 없습니다.");
           event.target.value = 3999;
         }
       } else if (tokenNum == 4) {
         if (inputValue < 4000) {
-          alert("4000보다 작을 수 없습니다.");
+          this.$store.commit("setAlert", "4000보다 작을 수 없습니다.");
           event.target.value = 4000;
         } else if (inputValue > 4999) {
-          alert("4999보다 클 수 없습니다.");
+          this.$store.commit("setAlert", "4999보다 클 수 없습니다.");
           event.target.value = 4999;
         }
       } else if (tokenNum == 5) {
         if (inputValue < 5000) {
-          alert("5000보다 작을 수 없습니다.");
+          this.$store.commit("setAlert", "5000보다 작을 수 없습니다.");
           event.target.value = 5000;
         } else if (inputValue > 5999) {
-          alert("5999보다 클 수 없습니다.");
+          this.$store.commit("setAlert", "5999보다 클 수 없습니다.");
           event.target.value = 5999;
         }
       }
@@ -168,7 +168,11 @@ export default {
         token5000 === ""
       ) {
         // 번호표 값이 하나라도 입력되지 않은 경우
-        return alert("최소 한개 이상의 번호표 값을 입력해주세요.");
+
+        return this.$store.commit(
+          "setAlert",
+          "최소 한개 이상의 번호표 값을 입력해주세요."
+        );
       }
 
       // 4자리의 숫자가 맞는지 확인 후, 맞으면 데이터에 추가
@@ -176,35 +180,50 @@ export default {
         if (token1000.length === 4) {
           addData("token1000", token1000);
         } else {
-          return alert("1000번대 번호표의 값이 4자리가 아닙니다.");
+          return this.$store.commit(
+            "setAlert",
+            "1000번대 번호표의 값이 4자리가 아닙니다."
+          );
         }
       }
       if (token2000 !== "") {
         if (token2000.length === 4) {
           addData("token2000", token2000);
         } else {
-          return alert("2000번대 번호표의 값이 4자리가 아닙니다.");
+          return this.$store.commit(
+            "setAlert",
+            "2000번대 번호표의 값이 4자리가 아닙니다."
+          );
         }
       }
       if (token3000 !== "") {
         if (token3000.length === 4) {
           addData("token3000", token3000);
         } else {
-          return alert("3000번대 번호표의 값이 4자리가 아닙니다.");
+          return this.$store.commit(
+            "setAlert",
+            "3000번대 번호표의 값이 4자리가 아닙니다."
+          );
         }
       }
       if (token4000 !== "") {
         if (token4000.length === 4) {
           addData("token4000", token4000);
         } else {
-          return alert("4000번대 번호표의 값이 4자리가 아닙니다.");
+          return this.$store.commit(
+            "setAlert",
+            "4000번대 번호표의 값이 4자리가 아닙니다."
+          );
         }
       }
       if (token5000 !== "") {
         if (token5000.length === 4) {
           addData("token5000", token5000);
         } else {
-          return alert("5000번대 번호표의 값이 4자리가 아닙니다.");
+          return this.$store.commit(
+            "setAlert",
+            "5000번대 번호표의 값이 4자리가 아닙니다."
+          );
         }
       }
       if (tokenmemo !== "") {
@@ -212,7 +231,10 @@ export default {
       }
 
       if (ipcRenderer.sendSync("api-tokenbriefing-upload", data) == true) {
-        alert("전송이 완료되었습니다. 곧 업데이트됩니다.");
+        this.$store.commit(
+          "setAlert",
+          "전송이 완료되었습니다. 곧 업데이트됩니다."
+        );
       }
     },
   },

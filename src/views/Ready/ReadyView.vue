@@ -130,7 +130,7 @@ export default {
         log.info("db 업데이트 완료");
         this.changeMainPageLock(false);
       } else {
-        alert("저장에 실패하였습니다.");
+        this.$store.commit("setAlert", "저장에 실패하였습니다.");
         log.info("db 업데이트 실패");
       }
     },

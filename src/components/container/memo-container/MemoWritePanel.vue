@@ -36,7 +36,7 @@ export default {
   methods: {
     saveButton() {
       if (this.memoContents == "") {
-        return alert("메모에 내용이 없습니다.");
+        return this.$store.commit("setAlert", "메모에 내용이 없습니다.");
       }
 
       const { ipcRenderer } = require("electron");
@@ -55,7 +55,10 @@ export default {
       addData("content", `${this.memoContents}`);
 
       if (ipcRenderer.sendSync("api-memo-upload", data) == true) {
-        alert("전송이 완료되었습니다. 곧 업데이트됩니다.");
+        this.$store.commit(
+          "setAlert",
+          "전송이 완료되었습니다. 곧 업데이트됩니다."
+        );
         this.memoContents = "";
         this.memoModeChange();
       }
