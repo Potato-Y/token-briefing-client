@@ -19,10 +19,7 @@
     </div>
 
     <!-- 프로그램 첫 실행 시 필수 진행 사항 -->
-    <ReadyView
-      :changeMainPageLock="changeMainPageLock"
-      v-if="mainPageLock == true"
-    />
+    <ReadyView :changeMainPageLock="changeMainPageLock" v-if="mainPageLock == true" />
   </div>
 </template>
 
@@ -44,6 +41,10 @@ export default {
       /** 메인 페이지 잠금 해제 */
       changeMainPageLock: (bool) => {
         this.mainPageLock = bool;
+
+        //잠금 해제와 함께 업데이트 확인
+        const { ipcRenderer } = require("electron");
+        ipcRenderer.send("api-check-app-update");
       },
     };
   },

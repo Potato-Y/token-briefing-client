@@ -82,7 +82,7 @@ export default {
        * 5초마다 새로운 정보를 로드하도록 수정
        */
       const set = () => {
-        log.info("최신 메모 데이터를 로드합니다.");
+        console.log("최신 메모 데이터를 로드합니다.");
 
         // ipcMain으로 api 데이터 요청
         const req = ipcRenderer.sendSync("api-memo-today-all");
