@@ -1,6 +1,7 @@
 import axios from 'axios';
 import db from './db/dbController/DBController.js';
 import log from 'electron-log';
+import path from 'path';
 
 const appVer = '0.1.0';
 
@@ -28,21 +29,61 @@ class ElectronIPC {
   }
 
   updateCheck() {
-    this.ipcMain.on('api-check-app-update', (event, arg) => {
+    this.ipcMain.on('api-check-app-update', () => {
       log.info('Checking for updates');
 
       axios
-        .get(`http://${arg}/api/v1/client/release_version`, { timeout: 3000 })
+        .get(`http://${this.serverIp}/api/v1/client/data/release_version`, { timeout: 3000 })
         .then((response) => {
           log.info(`this version: ${appVer}\nserver version: ${response.data.version}`);
 
           if (appVer !== response.data.version) {
             // 앱 버전이 동일하지 않은 경우 업데이트 실행
+            if (process.platform === 'win32') {
+              this.downloadUpdaterWin();
+            }
           }
         })
         .catch((err) => {
-          log.info('err channel: updateCheck()\n' + err);
+          log.error('err channel: updateCheck()\nurl:' + `http://${this.serverIp}/api/v1/client/data/release_version\n` + err);
         });
+    });
+  }
+
+  async downloadUpdaterWin() {
+    const Fs = require('fs');
+    const filePath = path.join(this.dir, 'updater.exe');
+
+    log.info('Start downloading Windows Updater');
+    // 업데이트 클라이언트 받아오기
+    const response = await axios({ method: 'GET', url: `http://${this.serverIp}/api/v1/client/download/win/updater`, responseType: 'stream' });
+
+    // 파일 저장하기
+    response.data.pipe(Fs.createWriteStream(filePath));
+
+    return new Promise((resolve, reject) => {
+      response.data.on('end', () => {
+        log.info(`response.data.on end`);
+
+        // 업데이트 클라이언트에서 서버 주소를 확인하기 위해 주소가 담긴 파일 생성
+        Fs.writeFile(path.join(this.dir, 'serverip.txt'), this.serverIp, (err) => {
+          if (err) {
+            console.error(err);
+            return;
+          }
+          //file written successfully
+        });
+
+        // 다운로드 한 파일을 실행
+        require('child_process').exec(`${filePath}`);
+
+        resolve();
+      });
+
+      response.data.on('error', () => {
+        log.error(`response.data.on error`);
+        reject();
+      });
     });
   }
 
