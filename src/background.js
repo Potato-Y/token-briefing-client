@@ -1,6 +1,6 @@
 'use strict';
 
-import { app, protocol, BrowserWindow, ipcMain } from 'electron';
+import { app, protocol, BrowserWindow, ipcMain, Tray, nativeImage } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer';
 import path from 'path';
@@ -13,7 +13,45 @@ protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: tru
 
 let win;
 
-log.info('START');
+log.info('::::::START::::::');
+
+/**
+ * 프로그램에서 사용할 디렉토리
+ */
+let directoryPath;
+let tryIconPath;
+
+// 배포, 개발 빌드에 따라 현재 위치를 지정한다.
+if (isDevelopment) {
+  // 만약 개발 모드라면
+  directoryPath = path.join(__dirname, '../');
+  tryIconPath = path.join(__dirname, '../src/assets/icon/512x512.png');
+} else {
+  // 만약 배포 모드라면
+  if (process.platform === 'win32') {
+    tryIconPath = path.join('assets/icon/512x512.png');
+    directoryPath = path.join(__dirname, '../../../../');
+
+    /** 새로운 폴더 만들기 */
+    const makeFoler = (dir) => {
+      if (!fs.existsSync(dir)) {
+        log.info('폴더를 생성합니다.\n * 생성 위치: ' + dir);
+        fs.mkdirSync(dir);
+      }
+    };
+
+    makeFoler(path.join(directoryPath, './token-briefing-client'));
+
+    directoryPath = path.join(directoryPath, 'token-briefing-client');
+  } else {
+    directoryPath = path.join(__dirname, '../../../../');
+  }
+}
+
+// 현재 디렉토리에 대해 로그 생성
+log.info('App run path (__dirname): ' + __dirname);
+log.info('App setting path (directoryPath): ' + directoryPath);
+log.info('Process ResourcesPath: ' + process.resourcesPath);
 
 async function createWindow() {
   // Create the browser window.
@@ -58,10 +96,14 @@ app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) createWindow();
 });
 
+let tray = null;
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
+  tray = new Tray(nativeImage.createFromPath(tryIconPath));
+  tray.setToolTip('Token Briefing');
   if (isDevelopment && !process.env.IS_TEST) {
     // Install Vue Devtools
     try {
@@ -87,40 +129,6 @@ if (isDevelopment) {
     });
   }
 }
-
-/**
- * 프로그램에서 사용할 디렉토리
- */
-let directoryPath;
-
-// 배포, 개발 빌드에 따라 현재 위치를 지정한다.
-if (isDevelopment) {
-  // 만약 개발 모드라면
-  directoryPath = path.join(__dirname, '../');
-} else {
-  // 만약 배포 모드라면
-  if (process.platform === 'win32') {
-    directoryPath = path.join(__dirname, '../../../../');
-
-    /** 새로운 폴더 만들기 */
-    const makeFoler = (dir) => {
-      if (!fs.existsSync(dir)) {
-        log.info('폴더를 생성합니다.\n * 생성 위치: ' + dir);
-        fs.mkdirSync(dir);
-      }
-    };
-
-    makeFoler(path.join(directoryPath, './token-briefing-client'));
-
-    directoryPath = path.join(directoryPath, 'token-briefing-client');
-  } else {
-    directoryPath = path.join(__dirname, '../../../../');
-  }
-}
-
-// 현재 디렉토리에 대해 로그 생성
-log.info('App run path: ' + __dirname);
-log.info('App setting path: ' + directoryPath);
 
 import ipcMapping from './electronbackend/electronIPC';
 new ipcMapping(ipcMain, directoryPath);
