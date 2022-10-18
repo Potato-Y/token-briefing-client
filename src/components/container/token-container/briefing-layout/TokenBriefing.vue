@@ -142,7 +142,9 @@ export default {
 
               new Notification("새로운 오전 마감 번호가 있습니다.", {
                 body: msg,
-              });
+              }).onclick = () => {
+                ipcRenderer.send("win-show");
+              };
 
               const { ipcRenderer } = require("electron");
               ipcRenderer.send("win-highligth");

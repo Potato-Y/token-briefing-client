@@ -1,6 +1,6 @@
 'use strict';
 
-import { app, protocol, BrowserWindow, ipcMain, Tray, nativeImage } from 'electron';
+import { app, protocol, BrowserWindow, ipcMain, Tray, nativeImage, Menu } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer';
 import path from 'path';
@@ -79,6 +79,42 @@ async function createWindow() {
     // Load the index.html when not in development
     win.loadURL('app://./index.html');
   }
+
+  const gotTheLock = app.requestSingleInstanceLock();
+
+  if (!gotTheLock) {
+    app.quit();
+  } else {
+    app.on('second-instance', () => {
+      // Someone tried to run a second instance, we should focus our window.
+      if (win) {
+        if (win.isMinimized() || !win.isVisible()) {
+          win.show();
+        }
+        win.focus();
+      }
+    });
+  }
+
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: '열기',
+      type: 'normal',
+      click() {
+        win.show();
+      },
+    },
+    { label: '닫기', type: 'normal', role: 'quit' },
+  ]);
+
+  tray.on('click', () => win.show());
+  tray.setContextMenu(contextMenu);
+  win.on('close', (e) => {
+    if (win.isVisible()) {
+      win.hide();
+      e.preventDefault();
+    }
+  });
 }
 
 // Quit when all windows are closed.
@@ -104,6 +140,7 @@ let tray = null;
 app.on('ready', async () => {
   tray = new Tray(nativeImage.createFromPath(tryIconPath));
   tray.setToolTip('Token Briefing');
+
   if (isDevelopment && !process.env.IS_TEST) {
     // Install Vue Devtools
     try {
@@ -137,4 +174,10 @@ new ipcMapping(ipcMain, directoryPath);
 ipcMain.on('win-highligth', () => {
   win.once('focus', () => win.flashFrame(false));
   return win.flashFrame(true);
+});
+
+ipcMain.on('win-show', () => {
+  log.info('ipcMain win-show');
+  win.show();
+  win.focus();
 });
