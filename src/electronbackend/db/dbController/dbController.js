@@ -6,15 +6,17 @@ const log = require('electron-log');
 const APPLY_DB_VERSION = 1;
 
 class DBController {
-  constructor(dir) {
+  constructor(directoryPath, appPath, app) {
     this.db;
     this.lastLatestDBVersion = 1;
-    this.dir = dir;
-    this.db_name = path.join(dir, 'Data', 'token-briefing-client.sqlite');
+    this.directoryPath = directoryPath;
+    this.appPath = appPath;
+    this.app = app;
+    this.db_name = path.join(directoryPath, 'Data', 'token-briefing-client.sqlite');
   }
 
   connectDB() {
-    makeFoler(path.join(this.dir, './Data')); //디렉터리가 없으면 생성
+    makeFoler(path.join(this.directoryPath, './Data')); //디렉터리가 없으면 생성
 
     this.db = new sqlite3.Database(this.db_name, (err) => {
       if (err) {
@@ -68,6 +70,16 @@ class DBController {
                 }
               }
             );
+
+            /** 처음 설정 시 앱이 부팅시 자동으로 켜지도록 설정 */
+            const updateExe = path.resolve(this.appPath, 'token-briefing-client.exe');
+            this.app.setLoginItemSettings({
+              openAtLogin: true,
+              path: updateExe,
+              args: [],
+            });
+
+            log.info('app open at login: true');
           });
         } else {
           // DB 버전 확인 시 정상적인 파일로 인식

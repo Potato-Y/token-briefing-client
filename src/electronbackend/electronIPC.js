@@ -6,14 +6,16 @@ import path from 'path';
 const appVer = '0.1.0';
 
 class ElectronIPC {
-  constructor(ipc, dir) {
+  constructor(ipc, app, directoryPath, appPath) {
     this.ipcMain = ipc;
+    this.app = app;
     this.dbController;
     this.userName = '\\Not Loading\\';
     this.serverIp = '\\Not Loading\\';
     /** dbLoad가 정상적으로 안된 경우 횟수 체크 */
     this.errStack = 0;
-    this.dir = dir;
+    this.directoryPath = directoryPath;
+    this.appPath = appPath;
 
     this.dbLoad();
 
@@ -89,7 +91,7 @@ class ElectronIPC {
 
   /** 프로그램에 필요한 DB 연결 및 내용 로드 */
   dbLoad() {
-    this.dbController = new db(this.dir);
+    this.dbController = new db(this.directoryPath, this.appPath, this.app);
     this.dbController.connectDB();
 
     this.dbController.getUserNameAndServerIp((userName, serverIp) => {

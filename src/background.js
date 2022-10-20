@@ -19,12 +19,15 @@ log.info('::::::START::::::');
  * 프로그램에서 사용할 디렉토리
  */
 let directoryPath;
+// 프로그램 위치
+let appPath;
 let tryIconPath;
 
 // 배포, 개발 빌드에 따라 현재 위치를 지정한다.
 if (isDevelopment) {
   // 만약 개발 모드라면
   directoryPath = path.join(__dirname, '../');
+  appPath = path.join(__dirname, '..');
   tryIconPath = path.join(__dirname, '../src/assets/icon/512x512.png');
 } else {
   // 만약 배포 모드라면
@@ -43,8 +46,11 @@ if (isDevelopment) {
     makeFoler(path.join(directoryPath, './token-briefing-client'));
 
     directoryPath = path.join(directoryPath, 'token-briefing-client');
+    appPath = path.join(__dirname, '../..');
   } else {
+    //Mac
     directoryPath = path.join(__dirname, '../../../../');
+    appPath = path.join(__dirname, '..');
   }
 }
 
@@ -52,6 +58,7 @@ if (isDevelopment) {
 log.info('App run path (__dirname): ' + __dirname);
 log.info('App setting path (directoryPath): ' + directoryPath);
 log.info('Process ResourcesPath: ' + process.resourcesPath);
+log.info('app start Path (appPath): ' + appPath);
 
 async function createWindow() {
   // Create the browser window.
@@ -168,7 +175,7 @@ if (isDevelopment) {
 }
 
 import ipcMapping from './electronbackend/electronIPC';
-new ipcMapping(ipcMain, directoryPath);
+new ipcMapping(ipcMain, app, directoryPath, appPath);
 
 // 작업표시줄 아이콘이 반응
 ipcMain.on('win-highligth', () => {
