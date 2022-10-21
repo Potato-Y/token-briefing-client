@@ -48,7 +48,7 @@ if (isDevelopment) {
     directoryPath = path.join(directoryPath, 'token-briefing-client');
     appPath = path.join(__dirname, '../..');
   } else {
-    //Mac
+    // MAC 단, 다른 운영체계 지원 시 꼭 추가 필요
     directoryPath = path.join(__dirname, '../../../../');
     appPath = path.join(__dirname, '..');
   }

@@ -1,21 +1,29 @@
 <template>
   <div v-if="appReady == true">
     <AppReady />
-    <button @click="appReady = false" v-if="serverConnectTryCnt > 3">
+    <button
+      class="setting-item"
+      @click="appReady = false"
+      v-if="serverConnectTryCnt > 3"
+    >
       연결 설정 변경
     </button>
   </div>
   <div v-if="appReady == false">
-    <div>기본 설정</div>
+    <div class="setting-item">기본 설정</div>
     <br />
-    <div>
+    <div class="setting-item">
       서버 IP
       <input type="text" v-model="serverIp" @input="startButtonLockOn()" />
       <button @click="serverCheck">서버 확인</button><br />
       서버 확인: {{ serverStateText }}
     </div>
-    <div>사용자 이름 <input v-model="userName" /></div>
+    <div class="setting-item">사용자 이름 <input v-model="userName" /></div>
+    <div class="setting-item">
+      부팅 시 자동 시작 <input type="checkbox" v-model="checkboxOpenAtLogin" />
+    </div>
     <button
+      class="setting-item"
       @click="start"
       v-bind:disabled="startButtonLock == true || userName == ''"
     >
@@ -49,6 +57,8 @@ export default {
       startButtonLock: true,
       /** 서버 연결 실패 횟수 */
       serverConnectTryCnt: 0,
+      /** 부팅 시  자동으로 실행 */
+      checkboxOpenAtLogin: true,
     };
   },
   methods: {
@@ -72,6 +82,7 @@ export default {
         // 만약 기본 설정이 완료된 경우 변수에 데이터를 저장하고 서버 연결 시도
         this.serverIp = data.serverIp;
         this.userName = data.userName;
+        this.checkboxOpenAtLogin = data.openAtLogin;
 
         const check = () => {
           log.info("서버 연결을 시도합니다.");
@@ -122,9 +133,10 @@ export default {
     start() {
       const { ipcRenderer } = require("electron");
       if (
-        ipcRenderer.sendSync("set-serverip-username", {
+        ipcRenderer.sendSync("set-client-settings", {
           serverIp: this.serverIp,
           userName: this.userName,
+          checkboxOpenAtLogin: this.checkboxOpenAtLogin,
         }) == true
       ) {
         log.info("db 업데이트 완료");

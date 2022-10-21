@@ -12,6 +12,7 @@ class ElectronIPC {
     this.dbController;
     this.userName = '\\Not Loading\\';
     this.serverIp = '\\Not Loading\\';
+    this.openAtLogin = '\\Not Loading\\';
     /** dbLoad가 정상적으로 안된 경우 횟수 체크 */
     this.errStack = 0;
     this.directoryPath = directoryPath;
@@ -94,9 +95,10 @@ class ElectronIPC {
     this.dbController = new db(this.directoryPath, this.appPath, this.app);
     this.dbController.connectDB();
 
-    this.dbController.getUserNameAndServerIp((userName, serverIp) => {
+    this.dbController.getClientSettings((userName, serverIp, openAtLogin) => {
       this.userName = userName;
       this.serverIp = serverIp;
+      this.openAtLogin = openAtLogin;
     });
   }
 
@@ -218,29 +220,27 @@ class ElectronIPC {
         // 만약 로딩이 지속적으로 안될 경우 회수를 누적하여 db 로드를 다시 요청한다.
         this.errStack++;
         if (this.errStack > 5) {
-          this.dbController.getUserNameAndServerIp((userName, serverIp) => {
+          this.dbController.getClientSettings((userName, serverIp, openAtLogin) => {
             this.userName = userName;
             this.serverIp = serverIp;
+            this.openAtLogin = openAtLogin;
           });
           return setTimeout(() => {
-            event.returnValue = { userName: this.userName, serverIp: this.serverIp };
+            event.returnValue = { userName: this.userName, serverIp: this.serverIp, openAtLogin: this.openAtLogin };
           }, 1000);
         }
       }
-      event.returnValue = { userName: this.userName, serverIp: this.serverIp };
+      event.returnValue = { userName: this.userName, serverIp: this.serverIp, openAtLogin: this.openAtLogin };
     });
   }
 
   /** 렌더에서 설정한 serverIp와 userName을 DB에 저장하는 ipc */
   setServerIpUserName() {
-    this.ipcMain.on('set-serverip-username', (event, args) => {
-      // if (this.dbController.updateUserNameAndServerIp(event, args) == true) {
-      //   this.serverIp = args.serverIp;
-      //   this.userName = args.userName;
-      // }
-      this.dbController.updateUserNameAndServerIp(event, args, () => {
+    this.ipcMain.on('set-client-settings', (event, args) => {
+      this.dbController.updateClientSettings(event, args, () => {
         this.serverIp = args.serverIp;
         this.userName = args.userName;
+        this.openAtLogin = args.openAtLogin;
       });
     });
   }

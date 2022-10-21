@@ -41,7 +41,8 @@ class DBController {
                 id TEXT PRIMART KEY,
                 db_version INTEGER NOT NULL,
                 server_ip TEXT,
-                user_name TEXT
+                user_name TEXT,
+                open_at_login TEXT
               )`,
               (err) => {
                 if (err) {
@@ -56,13 +57,15 @@ class DBController {
                 id,
                 db_version,
                 user_name,
-                server_ip
+                server_ip,
+                open_at_login
               )
               VALUES(
                 'settings',
                 '${APPLY_DB_VERSION}',
                 'not found',
-                'not found'
+                'not found',
+                'false'
               )`,
               (err) => {
                 if (err) {
@@ -70,14 +73,6 @@ class DBController {
                 }
               }
             );
-
-            /** 처음 설정 시 앱이 부팅시 자동으로 켜지도록 설정 */
-            const updateExe = path.resolve(this.appPath, 'token-briefing-client.exe');
-            this.app.setLoginItemSettings({
-              openAtLogin: true,
-              path: updateExe,
-              args: [],
-            });
 
             log.info('app open at login: true');
           });
@@ -98,31 +93,32 @@ class DBController {
   }
 
   /**
-   * electronIPC에서 userName과 serverIp 저장을 위해 사용
+   * electronIPC에서 클라이언트 설정을 받아오기
+   * userName, serverIp, 저장을 위해 사용
    * @param {*} func 변수 지정할 함수
    */
-  getUserNameAndServerIp(func) {
+  getClientSettings(func) {
     this.db.serialize();
     this.db.get(`SELECT * FROM 'client_settings' WHERE id='settings'`, (err, value) => {
       if (err) {
-        log.info('err [getUserNameAndServerIp]: ' + err);
+        log.info('err [getClientSettings]: ' + err);
       } else {
         try {
-          func(value.user_name, value.server_ip);
+          func(value.user_name, value.server_ip, value.open_at_login);
         } catch (err) {
-          log.info('err [getUserNameAndServerIp/catch]: ' + err);
+          log.info('err [getClientSettings/catch]: ' + err);
         }
       }
     });
   }
 
   /**
-   * 유저 설정 값을 변경합니다.
+   * 클라이언트 설정 값을 변경합니다.
    * @param  event ipcMain event
    * @param  args ipcMain args
    * @returns 작업이 정상 완료될 경우 true를 리턴
    */
-  updateUserNameAndServerIp(event, args, saveFun) {
+  updateClientSettings(event, args, saveFun) {
     this.db.serialize();
 
     this.db.run(
@@ -130,7 +126,8 @@ class DBController {
     UPDATE 'client_settings' 
     SET
     'server_ip'='${args.serverIp}', 
-    'user_name'='${args.userName}' 
+    'user_name'='${args.userName}',
+    'open_at_login'='${args.checkboxOpenAtLogin}'
     WHERE
     id='settings'`,
       (err) => {
@@ -143,6 +140,29 @@ class DBController {
           log.info('[updateUserNameAndServerIp] 성공');
           event.returnValue = true;
           saveFun();
+
+          let updateExe;
+          /** 사용자의 설정에 따라 부팅 시 자동 실행 설정 */
+          if (process.platform === 'win32') {
+            updateExe = path.resolve(this.appPath, 'token-briefing-client.exe');
+          } else {
+            // 개발용 임의 코드 추가
+            updateExe = path.resolve(this.appPath, 'token-briefing-client.app');
+          }
+
+          if (args.checkboxOpenAtLogin == true) {
+            this.app.setLoginItemSettings({
+              openAtLogin: true,
+              path: updateExe,
+              args: [],
+            });
+          } else {
+            this.app.setLoginItemSettings({
+              openAtLogin: false,
+              path: updateExe,
+              args: [],
+            });
+          }
 
           return true;
         }
