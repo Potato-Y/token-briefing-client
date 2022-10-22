@@ -62,7 +62,7 @@ export default {
     };
   },
   methods: {
-    /** 메인 페이지의 락을 true로 변경 */
+    /** 메인 페이지의 락을 해제 */
     runMainPageUnlock() {
       this.changeMainPageLock(false);
     },

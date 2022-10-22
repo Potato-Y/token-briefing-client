@@ -11,7 +11,7 @@
 
     <div v-if="mainPageLock == false">
       <div class="wrap">
-        <TitleBar />
+        <TitleBar :changeMainPageLock="changeMainPageLock" />
         <div className="item-wrap">
           <router-view />
         </div>
@@ -19,7 +19,10 @@
     </div>
 
     <!-- 프로그램 첫 실행 시 필수 진행 사항 -->
-    <ReadyView :changeMainPageLock="changeMainPageLock" v-if="mainPageLock == true" />
+    <ReadyView
+      :changeMainPageLock="changeMainPageLock"
+      v-if="mainPageLock == true"
+    />
   </div>
 </template>
 
@@ -42,9 +45,11 @@ export default {
       changeMainPageLock: (bool) => {
         this.mainPageLock = bool;
 
-        //잠금 해제와 함께 업데이트 확인
-        const { ipcRenderer } = require("electron");
-        ipcRenderer.send("api-check-app-update");
+        if (bool == false) {
+          //잠금 해제와 함께 업데이트 확인
+          const { ipcRenderer } = require("electron");
+          ipcRenderer.send("api-check-app-update");
+        }
       },
     };
   },
