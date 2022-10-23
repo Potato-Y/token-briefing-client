@@ -240,7 +240,7 @@ class ElectronIPC {
       this.dbController.updateClientSettings(event, args, () => {
         this.serverIp = args.serverIp;
         this.userName = args.userName;
-        this.openAtLogin = args.openAtLogin;
+        this.openAtLogin = args.checkboxOpenAtLogin;
       });
     });
   }
