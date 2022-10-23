@@ -11,17 +11,33 @@
       </span>
 
       &nbsp;&nbsp;|&nbsp;&nbsp;
-      <!-- <router-link>설정</router-link> -->
+      <router-link
+        to="/setting"
+        class="navlink-to-reset font-background-transparency"
+        >설정</router-link
+      >
     </div>
   </div>
 </template>
 
 <script>
+import log from "electron-log";
 export default {
+  name: "TitleBar",
+  props: {
+    /** 메인 페이지 락 변경 메소드 */
+    changeMainPageLock: Function,
+  },
   methods: {
     toHome() {
+      log.info(`toHome(), location.pathname: ${location.pathname}`);
+      log.info(`toHome(), location.href: ${location.href}`);
       if (location.pathname === "/") {
+        log.info("location reload");
         window.location.reload();
+      } else {
+        log.info("router push '/'");
+        this.$router.push("/");
       }
     },
   },
