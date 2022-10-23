@@ -100,8 +100,9 @@ export default {
               // 만약 첫 로드라면 이미 창이 열려있을 것을 감안하여 알림을 보내지 않는다.
               new Notification("메모 안내", {
                 body: "메모에 변경 사항이 있습니다.",
-              });
-              ipcRenderer.send("win-highligth");
+              }).onclick = () => {
+                ipcRenderer.send("win-show");
+              };
             }
           }
         } else {
