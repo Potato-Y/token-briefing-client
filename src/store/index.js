@@ -5,37 +5,60 @@ export default createStore({
   state: {
     alertMsg: { msg: 'MSG', modalState: false },
     /** 서버에서 받은 token briefing 데이터 */
-    tokenBriefingApiData: null,
+    apiDataTokenBriefing: {},
     /** 서버에서 받은 memo 데이터 */
-    memoApiData: null,
+    apiMemoData: {},
   },
   getters: {
+    /**
+     * 커스텀 alert
+     * @param state
+     * @returns 커스텀 alert 의 메시지를 반환
+     */
     alertMsg: (state) => {
       return state.alertMsg;
     },
-    getTokenBriefingApiData: (state) => {
-      return state.tokenBriefingApiData;
+    /**
+     * @param state
+     * @returns 저장된 토큰 브리핑의 데이터를 반환
+     */
+    getApiDataTokenBriefing: (state) => {
+      return state.apiDataTokenBriefing;
     },
-    getMemoApiData: (state) => {
-      return state.memoApiData;
+    /**
+     *
+     * @param state
+     * @returns 저장된 메모 데이터를 반환
+     */
+    getApiMemoData: (state) => {
+      return state.apiMemoData;
     },
   },
   mutations: {
+    /**
+     * 커스텀 alert를 표시하도록 메시지를 설정
+     * @param  state
+     * @param  msg 메시지 내용
+     */
     setAlert: (state, msg) => {
       log.info('setAlert msg: ' + msg);
       state.alertMsg.msg = msg;
       state.alertMsg.modalState = true;
     },
+    /**
+     * 커스텀 alert를 닫기
+     * @param  state
+     */
     setAlertOff: (state) => {
       state.alertMsg.modalState = false;
     },
-    setTokenBriefingApiData: (state, data) => {
-      log.info('setTokenBriefingApiData data: ' + data);
-      state.tokenBriefingApiData = data;
+    setApiDataTokenBriefing: (state, data) => {
+      log.info('setApiDataTokenBriefing data: ' + data);
+      state.apiDataTokenBriefing = data;
     },
-    setMemoApiData: (state, data) => {
-      log.info('setMemoApiData data: ' + data);
-      state.memoApiData = data;
+    setApiMemoData: (state, data) => {
+      log.info('setApiMemoData data: ' + data);
+      state.apiMemoData = data;
     },
   },
   actions: {},
