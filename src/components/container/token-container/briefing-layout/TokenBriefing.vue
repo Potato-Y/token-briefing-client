@@ -138,7 +138,7 @@ export default {
 
               this.writer = dbData.writer;
               this.updateDate = dbData.date;
-              // 상태 관리에 마지막 업데이트 날짜 저장하기
+              // 상태 관리에 받아온 데이터 저장하기
               this.$store.commit("setApiDataTokenBriefing", dbData);
 
               setTokenNum((num) => {
