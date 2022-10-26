@@ -77,7 +77,7 @@ export default {
   methods: {
     setData() {
       //기존에 저장된 내용이 있다면 불러오기
-      if (this.$store.state.apiMemoData != undefined) {
+      if (this.$store.state.apiMemoData !== null) {
         const tempData = this.$store.state.apiMemoData;
 
         this.update = tempData.lastUpdate;

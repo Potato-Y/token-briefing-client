@@ -7,7 +7,7 @@ export default createStore({
     /** 서버에서 받은 token briefing 데이터 */
     apiDataTokenBriefing: {},
     /** 서버에서 받은 memo 데이터 */
-    apiMemoData: {},
+    apiMemoData: null,
   },
   getters: {
     /**

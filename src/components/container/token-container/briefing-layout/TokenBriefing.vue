@@ -67,7 +67,7 @@ export default {
   methods: {
     setData() {
       // 기존에 저장된 내용이 있다면 불러오기
-      if (this.$store.state.apiDataTokenBriefing != undefined) {
+      if (this.$store.state.apiDataTokenBriefing !== undefined) {
         const tempData = this.$store.state.apiDataTokenBriefing;
 
         this.token1000 = tempData.token1000 == null ? "-" : tempData.token1000;
