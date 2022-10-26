@@ -76,6 +76,14 @@ export default {
   },
   methods: {
     setData() {
+      //기존에 저장된 내용이 있다면 불러오기
+      if (this.$store.state.apiMemoData != undefined) {
+        const tempData = this.$store.state.apiMemoData;
+
+        this.update = tempData.lastUpdate;
+        this.data = tempData.memoDbData.reverse();
+      }
+
       const { ipcRenderer } = require("electron");
 
       /**
@@ -95,6 +103,9 @@ export default {
             // 최신 정보 저장
             this.update = req.lastUpdate;
             this.data = req.memoDbData.reverse();
+
+            // 상태 관리에 받아온 데이터 저장하기
+            this.$store.commit("setApiMemoData", req);
 
             if (this.firstNoti == false) {
               // 만약 첫 로드라면 이미 창이 열려있을 것을 감안하여 알림을 보내지 않는다.
