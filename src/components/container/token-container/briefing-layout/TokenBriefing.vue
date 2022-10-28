@@ -44,6 +44,7 @@
 
 <script>
 import log from "electron-log";
+import { onUnmounted } from "@vue/runtime-core";
 
 export default {
   name: "TokenBriefing",
@@ -179,12 +180,20 @@ export default {
             this.showBriefing = false;
           }
         }
-
-        setTimeout(() => {
-          set();
-        }, 5000);
       };
+
+      // 첫 실행 시작
       set();
+
+      /** 5초마다 새로운 메모 정보 로드 */
+      const loopSet = setInterval(() => {
+        set();
+      }, 5000);
+
+      /** 라우터 이동 시 데이터 새로고침을 중지 */
+      onUnmounted(() => {
+        clearTimeout(loopSet);
+      });
     },
   },
   mounted() {
