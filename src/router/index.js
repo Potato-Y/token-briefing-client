@@ -20,6 +20,11 @@ const routes = [
     name: 'setting',
     component: () => import(/* webpackChunkName: "setting" */ '../components/SettingComp.vue'),
   },
+  {
+    path: '/opensource',
+    name: 'opensource',
+    component: () => import(/* webpackChunkName: "opensource" */ '../views/UsedOpenSourceView.vue'),
+  },
 ];
 
 const router = createRouter({

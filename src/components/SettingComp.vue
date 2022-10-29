@@ -18,6 +18,10 @@
     >
       저장
     </button>
+
+    <div>
+      <router-link to="/opensource">오픈 소스</router-link>
+    </div>
   </div>
 </template>
 
