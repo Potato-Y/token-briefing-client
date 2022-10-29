@@ -30,6 +30,7 @@
 import log from "electron-log";
 import MemoItem from "./MemoItem.vue";
 import MemoWritePanel from "./MemoWritePanel.vue";
+import { onUnmounted } from "@vue/runtime-core";
 export default {
   name: "MemoContainer",
   data() {
@@ -76,6 +77,14 @@ export default {
   },
   methods: {
     setData() {
+      //기존에 저장된 내용이 있다면 불러오기
+      if (this.$store.state.apiMemoData !== null) {
+        const tempData = this.$store.state.apiMemoData;
+
+        this.update = tempData.lastUpdate;
+        this.data = tempData.memoDbData.reverse();
+      }
+
       const { ipcRenderer } = require("electron");
 
       /**
@@ -96,6 +105,9 @@ export default {
             this.update = req.lastUpdate;
             this.data = req.memoDbData.reverse();
 
+            // 상태 관리에 받아온 데이터 저장하기
+            this.$store.commit("setApiMemoData", req);
+
             if (this.firstNoti == false) {
               // 만약 첫 로드라면 이미 창이 열려있을 것을 감안하여 알림을 보내지 않는다.
               new Notification("메모 안내", {
@@ -111,15 +123,20 @@ export default {
 
         // 첫 알림이 아님을 위해 false로 변경한다.
         this.firstNoti = false;
-
-        /** 5초마다 새로운 메모 정보 로드 */
-        setTimeout(() => {
-          set();
-        }, 5000);
       };
 
       // 첫 실행 시작
       set();
+
+      /** 5초마다 새로운 메모 정보 로드 */
+      const loopSet = setInterval(() => {
+        set();
+      }, 5000);
+
+      /** 라우터 이동 시 데이터 새로고침을 중지 */
+      onUnmounted(() => {
+        clearTimeout(loopSet);
+      });
     },
   },
   mounted() {

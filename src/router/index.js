@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory } from 'vue-router';
+import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router';
 import HomeView from '../views/Home/HomeView.vue';
 
 const routes = [
@@ -23,7 +23,8 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHashHistory(process.env.BASE_URL),
+  // 개발 환경에선 createWebHistory, 실제 빌드된 환경에선 createWebHashHistory를 제공
+  history: process.env.NODE_ENV == 'development' ? createWebHistory(process.env.BASE_URL) : createWebHashHistory(process.env.BASE_URL),
   routes,
 });
 

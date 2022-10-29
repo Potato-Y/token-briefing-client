@@ -16,7 +16,10 @@
       >
         당일 오전 마감번호가 있습니다. <br />
         시간: {{ updateDate.split(" ")[0] }}
-        {{ updateDate.split(" ")[1] }}
+        <span class="font-background-transparency" style="font-weight: bold">{{
+          updateDate.split(" ")[1]
+        }}</span>
+
         <br />
         작성자: {{ writer }}<br /><br />
         1000: {{ token1000 }}<br />
@@ -40,6 +43,9 @@
 </template>
 
 <script>
+import log from "electron-log";
+import { onUnmounted } from "@vue/runtime-core";
+
 export default {
   name: "TokenBriefing",
   data() {
@@ -61,6 +67,22 @@ export default {
   },
   methods: {
     setData() {
+      // 기존에 저장된 내용이 있다면 불러오기
+      if (this.$store.state.apiDataTokenBriefing !== undefined) {
+        const tempData = this.$store.state.apiDataTokenBriefing;
+
+        this.token1000 = tempData.token1000 == null ? "-" : tempData.token1000;
+        this.token2000 = tempData.token2000 == null ? "-" : tempData.token2000;
+        this.token3000 = tempData.token3000 == null ? "-" : tempData.token3000;
+        this.token4000 = tempData.token4000 == null ? "-" : tempData.token4000;
+        this.token5000 = tempData.token5000 == null ? "-" : tempData.token5000;
+        this.writer = tempData.writer;
+        this.updateDate = tempData.date;
+        this.memo = tempData.memo;
+
+        this.showBriefing = true;
+      }
+
       const { ipcRenderer } = require("electron");
 
       /**
@@ -68,6 +90,8 @@ export default {
        */
       const set = () => {
         console.log("최신 브리핑 데이터를 로드합니다.");
+
+        // 만약 기존에 저장한 내용이 있다면 불러오기
 
         // api 불러오기
         const req = ipcRenderer.sendSync(
@@ -92,8 +116,9 @@ export default {
           if (date == dbData.date.split(" ")[0]) {
             // 오늘 것이 맞으면 실행
 
-            if (this.updateDate != dbData.date) {
-              // 만약 새로운 내용이 있다면 실행
+            if (this.$store.state.apiDataTokenBriefing.date != dbData.date) {
+              // 만약 새로운 내용이 있다면 실행, 기존 내용은 상태 관리에서 가져오기.
+              log.info("token briefing 새로운 내용이 있습니다.");
 
               /** Notification으로 보낼 메시지 내용 추가 */
               let msg = "";
@@ -114,6 +139,8 @@ export default {
 
               this.writer = dbData.writer;
               this.updateDate = dbData.date;
+              // 상태 관리에 받아온 데이터 저장하기
+              this.$store.commit("setApiDataTokenBriefing", dbData);
 
               setTokenNum((num) => {
                 this.token1000 = num;
@@ -153,12 +180,20 @@ export default {
             this.showBriefing = false;
           }
         }
-
-        setTimeout(() => {
-          set();
-        }, 5000);
       };
+
+      // 첫 실행 시작
       set();
+
+      /** 5초마다 새로운 메모 정보 로드 */
+      const loopSet = setInterval(() => {
+        set();
+      }, 5000);
+
+      /** 라우터 이동 시 데이터 새로고침을 중지 */
+      onUnmounted(() => {
+        clearTimeout(loopSet);
+      });
     },
   },
   mounted() {

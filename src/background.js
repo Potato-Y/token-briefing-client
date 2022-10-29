@@ -28,11 +28,11 @@ if (isDevelopment) {
   // 만약 개발 모드라면
   directoryPath = path.join(__dirname, '../');
   appPath = path.join(__dirname, '..');
-  tryIconPath = path.join(__dirname, '../src/assets/icon/512x512.png');
+  tryIconPath = path.join(__dirname, '../src/assets/icons/512x512.png');
 } else {
   // 만약 배포 모드라면
   if (process.platform === 'win32') {
-    tryIconPath = path.join('assets/icon/512x512.png');
+    tryIconPath = path.join('assets/icons/512x512.png');
     directoryPath = path.join(__dirname, '../../../../');
 
     /** 새로운 폴더 만들기 */
