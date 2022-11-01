@@ -19,8 +19,8 @@
       저장
     </button>
 
-    <div>
-      <router-link to="/opensource">오픈 소스</router-link>
+    <div class="setting-item">
+      <router-link to="/about">about</router-link>
     </div>
   </div>
 </template>
