@@ -18,6 +18,10 @@
     >
       저장
     </button>
+
+    <div class="setting-item">
+      <router-link to="/about">about</router-link>
+    </div>
   </div>
 </template>
 

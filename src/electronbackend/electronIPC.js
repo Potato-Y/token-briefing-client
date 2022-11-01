@@ -29,6 +29,13 @@ class ElectronIPC {
     this.apiMemocontentsUpload();
     this.apiMemoDelete();
     this.updateCheck();
+    this.getAppVer();
+  }
+
+  getAppVer() {
+    this.ipcMain.on('api-get-app-version', (event) => {
+      event.returnValue = appVer;
+    });
   }
 
   updateCheck() {

@@ -22,6 +22,7 @@
 
 <script>
 import log from "electron-log";
+
 export default {
   name: "TitleBar",
   props: {

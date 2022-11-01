@@ -31,6 +31,7 @@ import log from "electron-log";
 import MemoItem from "./MemoItem.vue";
 import MemoWritePanel from "./MemoWritePanel.vue";
 import { onUnmounted } from "@vue/runtime-core";
+
 export default {
   name: "MemoContainer",
   data() {
