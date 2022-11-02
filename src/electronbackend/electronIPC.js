@@ -62,7 +62,7 @@ class ElectronIPC {
 
   async downloadUpdaterWin() {
     const Fs = require('fs');
-    const filePath = path.join(this.dir, 'updater.exe');
+    const filePath = path.join(this.directoryPath, 'updater.exe');
 
     log.info('Start downloading Windows Updater');
     // 업데이트 클라이언트 받아오기
@@ -76,7 +76,7 @@ class ElectronIPC {
         log.info(`response.data.on end`);
 
         // 업데이트 클라이언트에서 서버 주소를 확인하기 위해 주소가 담긴 파일 생성
-        Fs.writeFile(path.join(this.dir, 'serverip.txt'), this.serverIp, (err) => {
+        Fs.writeFile(path.join(this.directoryPath, 'serverip.txt'), this.serverIp, (err) => {
           if (err) {
             console.error(err);
             return;
