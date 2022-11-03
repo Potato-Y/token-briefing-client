@@ -1,0 +1,14 @@
+#total-container {
+  width: 100%;
+}
+
+.token-container {
+  display: inline-block;
+  width: 330px;
+  margin-right: 20px;
+}
+
+.memo-container {
+  float: right;
+  width: 450px;
+}

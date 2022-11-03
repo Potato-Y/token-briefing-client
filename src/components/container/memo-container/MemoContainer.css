@@ -1,0 +1,29 @@
+#memo-container-body {
+  padding: 10px;
+  padding-top: 20px;
+}
+
+#new-memo-button {
+  border-radius: 4px;
+  border: 1px solid rgba(228, 235, 175, 0.578);
+  background-color: #f4ecd6;
+
+  margin-left: 15px;
+  font-size: 15px;
+
+  padding-top: 3px;
+  padding-bottom: 3px;
+
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+/* 테두리가 생기지 않도록 */
+.new-memo-button:focus {
+  outline: none;
+}
+
+#memo-container-title-text {
+  font-family: 'NanumSquareRoundEB' !important;
+  font-size: 23px;
+}

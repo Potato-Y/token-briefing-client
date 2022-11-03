@@ -1,19 +1,24 @@
 {
   "name": "token-briefing-client",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "electron:build": "vue-cli-service electron:build",
+    "electron:build-mac": "vue-cli-service electron:build --mac",
+    "electron:build-win": "vue-cli-service electron:build --win --x64",
     "electron:serve": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps"
   },
   "main": "background.js",
   "dependencies": {
+    "axios": "^0.27.2",
     "core-js": "^3.8.3",
+    "electron-log": "^4.4.8",
+    "sqlite3": "^5.0.11",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",
     "vuex": "^4.0.0"
@@ -31,6 +36,11 @@
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.0.3",
     "vue-cli-plugin-electron-builder": "~2.1.1"
+  },
+  "overrides": {
+    "vue-cli-plugin-electron-builder": {
+      "electron-builder": "^23.0.3"
+    }
   },
   "eslintConfig": {
     "root": true,
