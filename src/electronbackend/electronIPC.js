@@ -3,7 +3,7 @@ import db from './db/dbController/DBController.js';
 import log from 'electron-log';
 import path from 'path';
 
-const appVer = '1.0.0';
+const appVer = '1.1.0';
 
 class ElectronIPC {
   constructor(ipc, app, directoryPath, appPath) {
