@@ -80,6 +80,12 @@ export default {
         this.updateDate = tempData.date;
         this.memo = tempData.memo;
 
+        if (tempData.memo != "null") {
+          this.memo = tempData.memo;
+        } else {
+          this.memo = "";
+        }
+
         this.showBriefing = true;
       }
 
@@ -90,8 +96,6 @@ export default {
        */
       const set = () => {
         console.log("최신 브리핑 데이터를 로드합니다.");
-
-        // 만약 기존에 저장한 내용이 있다면 불러오기
 
         // api 불러오기
         const req = ipcRenderer.sendSync(
