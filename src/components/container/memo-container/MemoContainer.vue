@@ -118,8 +118,6 @@ export default {
               };
             }
           }
-        } else {
-          this.data = [];
         }
 
         // 첫 알림이 아님을 위해 false로 변경한다.
